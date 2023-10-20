@@ -1,0 +1,10 @@
+{
+    "rust-analyzer.linkedProjects": [
+        "./shaders/compute/Cargo.toml",
+        "./shaders/simple/Cargo.toml",
+        "./shaders/common/Cargo.toml",
+        "./shaders/mouse/Cargo.toml",
+        "./shaders/sky/Cargo.toml",
+        "./builder/Cargo.toml",
+    ]
+}

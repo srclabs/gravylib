@@ -1,8 +1,56 @@
 [package]
 name = "grits"
-version = "0.1.0"
+version = "0.1.0-alpha.1+1"
 edition = "2021"
+license = "MIT OR Apache-2.0"
+authors = ["Dr. Rubisco <doc@thedocruby.dev>"]
+description = "(WIP) Making GPU-first software development a reality, using the power of `rust-gpu`."
+keywords = ["rust-gpu", "wgpu", "compute-shader", "vulkan", "toolkit", "framework"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lib]
+crate-type = ["lib", "cdylib"]
+
 [dependencies]
+futures = { version = "0.3", default-features = false, features = ["std", "executor"] }
+wgpu = { version = "0.17", features = ["spirv", "vulkan-portability"] }
+winit = "0.28"
+cfg-if = "1.0.0"
+common = { path = "./shaders/common" }
+structopt = "0.3"
+strum = { version = "0.25", default_features = false, features = ["std", "derive"] }
+bytemuck = "1.6.3"
+env_logger = "0.10.0"
+spirv-builder = { version = "=0.9.0", features = ["watch"] }
+
+[workspace]
+resolver = "2"
+members = [
+    "shaders/simple",
+    "shaders/compute",
+    "shaders/mouse",
+    "shaders/sky",
+    "builder"
+]
+
+# See rustc_codegen_spirv/Cargo.toml for details on these features
+[features]
+default = ["use-compiled-tools"]
+use-installed-tools = ["spirv-builder/use-installed-tools"]
+use-compiled-tools = ["spirv-builder/use-compiled-tools"]
+
+[workspace.package]
+version = "0.1.0-alpha.1+1"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/thedocruby/grits"
+authors = ["Dr. Rubisco <doc@thedocruby.dev>"]
+
+[workspace.dependencies]
+spirv-std = { version = "=0.9.0" }
+spirv-std-types = { version = "=0.9.0" }
+spirv-std-macros = { version = "=0.9.0" }
+spirv-builder = { version = "=0.9.0", default-features = false  }
+rustc_codegen_spirv = { version = "=0.9.0", default-features = false }
+rustc_codegen_spirv-types = { version = "=0.9.0" }

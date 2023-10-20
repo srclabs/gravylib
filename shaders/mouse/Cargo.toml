@@ -1,0 +1,15 @@
+[package]
+name = "mouse"
+version = "0.0.0"
+publish = false
+authors.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+crate-type = ["dylib"]
+
+[dependencies]
+common = { path = "../../shaders/common" }
+spirv-std = { workspace = true }
