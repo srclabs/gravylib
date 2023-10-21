@@ -1,3 +1,7 @@
+// * Example program using grits to build a simple shader program
+
+use grits::*;
+
 fn main() {
-    grits::main();
+    execute(GritType::Pixel);
 }

@@ -71,7 +71,6 @@
 // #![allow()]
 
 use std::borrow::Cow;
-use structopt::StructOpt;
 use strum::{Display, EnumString};
 
 mod compute;
@@ -80,7 +79,7 @@ mod graphics;
 // * Enum for types of grits (shader programs)
 
 #[derive(EnumString, Display, PartialEq, Eq, Copy, Clone)]
-pub enum Grit {
+pub enum GritType {
     Pixel,
     // disabled for now
     //// Compute,
@@ -142,7 +141,7 @@ fn maybe_watch(
         std::env::set_var("OUT_DIR", env!("OUT_DIR"));
         std::env::set_var("PROFILE", env!("PROFILE"));
         let crate_name = match options.grit {
-            Grit::Pixel => "pixel",
+            GritType::Pixel => "pixel",
             //// Grit::Compute => "compute"
         };
         let manifest_dir = env!("CARGO_MANIFEST_DIR");
@@ -202,26 +201,26 @@ fn maybe_watch(
 
 // * Struct for command line options
 
-#[derive(StructOpt, Clone)]
-#[structopt(name = "example-runner-wgpu")]
+#[derive(Clone)]
 pub struct Options {
-    #[structopt(short, long, default_value = "Pixel")]
-    grit: Grit,
-
-    #[structopt(long)]
+    grit: GritType,
     force_spirv_passthru: bool,
 }
 
 // * Main function
 
-pub fn main() {
-    let options: Options = Options::from_args();
+pub fn execute(grit: GritType) {
 
     /* Compute Logic
     if options.grit == Grit::Compute {
         return compute::start(&options);
     }
     */
+
+    let options = Options {
+        grit,
+        force_spirv_passthru: false,
+    };
 
     graphics::start(
         &options,
