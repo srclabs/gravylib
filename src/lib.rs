@@ -75,11 +75,12 @@ use structopt::StructOpt;
 use strum::{Display, EnumString};
 
 mod compute;
-
 mod graphics;
 
+// * Enum for types of grits (shader programs)
+
 #[derive(EnumString, Display, PartialEq, Eq, Copy, Clone)]
-pub enum RustGPUShader {
+pub enum Grit {
     Pixel,
     Compute,
     // One day...
@@ -87,6 +88,8 @@ pub enum RustGPUShader {
     //// Task,
     //// Audio,
 }
+
+// * Struct for compiled shader modules
 
 struct CompiledShaderModules {
     named_spv_modules: Vec<(Option<String>, wgpu::ShaderModuleDescriptorSpirV<'static>)>,
@@ -118,6 +121,9 @@ impl CompiledShaderModules {
     }
 }
 
+// * Function for watching & hot reloading shader files
+// TODO(thedocruby) Try to understand this...
+
 fn maybe_watch(
     options: &Options,on_watch: Option<
         Box<dyn FnMut(CompiledShaderModules) + Send + 'static>,
@@ -134,9 +140,9 @@ fn maybe_watch(
         // under cargo by setting these environment variables.
         std::env::set_var("OUT_DIR", env!("OUT_DIR"));
         std::env::set_var("PROFILE", env!("PROFILE"));
-        let crate_name = match options.shader {
-            RustGPUShader::Pixel => "pixel",
-            RustGPUShader::Compute => "compute"
+        let crate_name = match options.grit {
+            Grit::Pixel => "pixel",
+            Grit::Compute => "compute"
         };
         let manifest_dir = env!("CARGO_MANIFEST_DIR");
         let crate_path = [manifest_dir, "shaders", crate_name]
@@ -193,20 +199,24 @@ fn maybe_watch(
     }
 }
 
+// * Struct for command line options
+
 #[derive(StructOpt, Clone)]
 #[structopt(name = "example-runner-wgpu")]
 pub struct Options {
     #[structopt(short, long, default_value = "Pixel")]
-    shader: RustGPUShader,
+    grit: Grit,
 
     #[structopt(long)]
     force_spirv_passthru: bool,
 }
 
+// * Main function
+
 pub fn main() {
     let options: Options = Options::from_args();
 
-    if options.shader == RustGPUShader::Compute {
+    if options.grit == Grit::Compute {
         return compute::start(&options);
     }
 

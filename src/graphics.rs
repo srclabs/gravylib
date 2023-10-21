@@ -2,10 +2,12 @@ use crate::{maybe_watch, CompiledShaderModules, Options};
 
 use common::ShaderConstants;
 use winit::{
-    event::{ElementState, Event, KeyboardInput, MouseButton, VirtualKeyCode, WindowEvent},
+    event::{ElementState, Event, KeyboardInput, /* MouseButton, */ VirtualKeyCode, WindowEvent},
     event_loop::{ControlFlow, EventLoop, EventLoopBuilder},
     window::Window,
 };
+
+// * Helpers
 
 mod shaders {
     // The usual usecase of code generation is always building in build.rs, and so the codegen
@@ -17,6 +19,7 @@ mod shaders {
     pub const main_vs: &str = "main_vs";
 }
 
+/*  Mouse Logic
 fn mouse_button_index(button: MouseButton) -> usize {
     match button {
         MouseButton::Left => 0,
@@ -25,6 +28,9 @@ fn mouse_button_index(button: MouseButton) -> usize {
         MouseButton::Other(i) => 3 + (i as usize),
     }
 }
+*/
+
+// * Run the main loop
 
 async fn run(
     options: Options,
@@ -32,14 +38,20 @@ async fn run(
     window: Window,
     compiled_shader_modules: CompiledShaderModules,
 ) {
+    // * Create the `wgpu` instance
+
     let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
         backends: wgpu::util::backend_bits_from_env()
         .unwrap_or(wgpu::Backends::VULKAN | wgpu::Backends::METAL),
         dx12_shader_compiler: wgpu::util::dx12_shader_compiler_from_env().unwrap_or_default(),
     });
 
+    // * Create the initial surface
+
     let initial_surface = unsafe { instance.create_surface(&window) }
             .expect("Failed to create surface from window");
+    
+    // * Initialize the adapter
 
     let adapter = wgpu::util::initialize_adapter_from_env_or_default(
         &instance,
@@ -49,16 +61,20 @@ async fn run(
     .await
     .expect("Failed to find an appropriate adapter");
 
+    // * Configure the device features & limits
+
     let mut features = wgpu::Features::PUSH_CONSTANTS;
     if options.force_spirv_passthru {
         features |= wgpu::Features::SPIRV_SHADER_PASSTHROUGH;
     }
+
     let limits = wgpu::Limits {
         max_push_constant_size: 128,
         ..Default::default()
     };
 
-    // Create the logical device and command queue
+    // * Create the logical device and command queue with the adapter
+
     let (device, queue) = adapter
         .request_device(
             &wgpu::DeviceDescriptor {
@@ -70,6 +86,8 @@ async fn run(
         )
         .await
         .expect("Failed to create device");
+
+    // * Configure surface with device & adapter
 
     let auto_configure_surface =
         |adapter: &_, device: &_, surface: wgpu::Surface, size: winit::dpi::PhysicalSize<_>| {
@@ -94,7 +112,7 @@ async fn run(
         };
     let mut surface_with_config = auto_configure_surface(&adapter, &device, initial_surface, window.inner_size());
 
-    // Load the shaders from disk
+    // * Create pipeline layout from the shaders on disk
 
     let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
         label: None,
@@ -105,6 +123,8 @@ async fn run(
         }],
     });
 
+    // * Create the render pipeline
+
     let mut render_pipeline = create_pipeline(
         &options,
         &device,
@@ -113,14 +133,18 @@ async fn run(
         compiled_shader_modules,
     );
 
-    let start = std::time::Instant::now();
-
+    /*  Mouse Logic
     let (mut cursor_x, mut cursor_y) = (0.0, 0.0);
     let (mut drag_start_x, mut drag_start_y) = (0.0, 0.0);
     let (mut drag_end_x, mut drag_end_y) = (0.0, 0.0);
     let mut mouse_button_pressed = 0;
     let mut mouse_button_press_since_last_frame = 0;
     let mut mouse_button_press_time = [f32::NEG_INFINITY; 3];
+    */
+
+    // * Start main loop
+
+    let start = std::time::Instant::now();
 
     event_loop.run(move |event, _, control_flow| {
         // Have the closure take ownership of the resources.
@@ -129,11 +153,14 @@ async fn run(
         let _ = (&instance, &adapter, &pipeline_layout);
         let render_pipeline = &mut render_pipeline;
 
+        // * Handle events
         *control_flow = ControlFlow::Wait;
         match event {
             Event::MainEventsCleared => {
                 window.request_redraw();
             }
+
+            // * Resize window
             Event::WindowEvent {
                 event: WindowEvent::Resized(size),
                 ..
@@ -146,6 +173,8 @@ async fn run(
                     surface.configure(&device, surface_config);
                 }
             }
+
+            // * Redraw window
             Event::RedrawRequested(_) => {
                 // FIXME(eddyb) only the mouse shader *really* needs this, could
                 // avoid doing wasteful rendering by special-casing each shader?
@@ -191,12 +220,15 @@ async fn run(
                     });
 
                     let time = start.elapsed().as_secs_f32();
+
+                    /* Mouse Logic
                     for (i, press_time) in mouse_button_press_time.iter_mut().enumerate() {
                         if (mouse_button_press_since_last_frame & (1 << i)) != 0 {
                             *press_time = time;
                         }
                     }
                     mouse_button_press_since_last_frame = 0;
+                    */
 
                     let push_constants = ShaderConstants {
                         width: window.inner_size().width,
@@ -216,6 +248,8 @@ async fn run(
                 queue.submit(Some(encoder.finish()));
                 output.present();
             }
+
+            // * Close window on escape
             Event::WindowEvent {
                 event:
                     WindowEvent::CloseRequested
@@ -229,6 +263,42 @@ async fn run(
                     },
                 ..
             } => *control_flow = ControlFlow::Exit,
+
+            // * F11 Fullscreen toggle
+            Event::WindowEvent {
+                event:
+                    WindowEvent::KeyboardInput {
+                        input:
+                            KeyboardInput {
+                                virtual_keycode: Some(VirtualKeyCode::F11),
+                                state: ElementState::Pressed,
+                                ..
+                            },
+                        ..
+                    },
+                ..
+            } => {
+                if window.fullscreen().is_some() {
+                    window.set_fullscreen(None);
+                } else {
+                    window.set_fullscreen(Some(winit::window::Fullscreen::Borderless(None)));
+                }
+            }
+
+            // * Shader hot-reloading?
+            Event::UserEvent(new_module) => {
+                *render_pipeline = create_pipeline(
+                    &options,
+                    &device,
+                    &pipeline_layout,
+                    surface_with_config.1.format,
+                    new_module,
+                );
+                window.request_redraw();
+                *control_flow = ControlFlow::Poll;
+            }
+            
+            /* Mouse Logic
             Event::WindowEvent {
                 event: WindowEvent::MouseInput { state, button, .. },
                 ..
@@ -260,21 +330,15 @@ async fn run(
                     drag_end_y = cursor_y;
                 }
             }
-            Event::UserEvent(new_module) => {
-                *render_pipeline = create_pipeline(
-                    &options,
-                    &device,
-                    &pipeline_layout,
-                    surface_with_config.1.format,
-                    new_module,
-                );
-                window.request_redraw();
-                *control_flow = ControlFlow::Poll;
-            }
+            */
+
+            // * Ignore other events
             _ => {}
         }
     });
 }
+
+// * Create the render pipeline
 
 fn create_pipeline(
     options: &Options,

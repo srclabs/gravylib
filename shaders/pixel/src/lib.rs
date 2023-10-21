@@ -1,5 +1,5 @@
-// * Standard imports. These should be abstracted eventually.
-// TODO(thedocruby) Abstract these
+// * Standard imports.
+// FIXME(thedocruby) These should be abstracted eventually.
 #![cfg_attr(target_arch = "spirv", no_std)]
 #![deny(warnings)]
 use spirv_std::spirv;
@@ -62,9 +62,8 @@ use spirv_std::num_traits::Float;
 
 // * See? Pretty shader :>
 
-// * Actual entry points. These should be abstracted eventually.
-// TODO(thedocruby) Abstract these
-
+// * Actual entry points.
+// FIXME(thedocruby) These should be abstracted eventually.
 #[spirv(fragment)]
 pub fn main_fs(
     #[spirv(frag_coord)] in_frag_coord: Vec4,
