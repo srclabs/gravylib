@@ -1,3 +1,4 @@
+/* Compute Logic
 use crate::{maybe_watch, CompiledShaderModules, Options};
 
 use std::{convert::TryInto, time::Duration};
@@ -206,3 +207,4 @@ async fn start_internal(options: &Options, compiled_shader_modules: CompiledShad
         )
     );
 }
+*/

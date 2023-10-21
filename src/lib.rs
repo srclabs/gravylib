@@ -82,7 +82,8 @@ mod graphics;
 #[derive(EnumString, Display, PartialEq, Eq, Copy, Clone)]
 pub enum Grit {
     Pixel,
-    Compute,
+    // disabled for now
+    //// Compute,
     // One day...
     //// Mesh,
     //// Task,
@@ -142,7 +143,7 @@ fn maybe_watch(
         std::env::set_var("PROFILE", env!("PROFILE"));
         let crate_name = match options.grit {
             Grit::Pixel => "pixel",
-            Grit::Compute => "compute"
+            //// Grit::Compute => "compute"
         };
         let manifest_dir = env!("CARGO_MANIFEST_DIR");
         let crate_path = [manifest_dir, "shaders", crate_name]
@@ -216,9 +217,11 @@ pub struct Options {
 pub fn main() {
     let options: Options = Options::from_args();
 
+    /* Compute Logic
     if options.grit == Grit::Compute {
         return compute::start(&options);
     }
+    */
 
     graphics::start(
         &options,
