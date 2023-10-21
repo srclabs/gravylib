@@ -2,7 +2,8 @@
 // FIXME(thedocruby) These should be abstracted eventually.
 #![cfg_attr(target_arch = "spirv", no_std)]
 #![deny(warnings)]
-use spirv_std::spirv;
+use spirv_std::*;
+use glam::*;
 #[cfg(target_arch = "spirv")]
 use spirv_std::num_traits::Float;
 
@@ -10,8 +11,8 @@ use spirv_std::num_traits::Float;
     // Ported to Rust from <https://www.shadertoy.com/view/mtyGWy>
 
     // Imports
-    use glam::*;
     use common::*;
+    use core::f32::consts::TAU;
 
     // Helpers
     pub fn palette(t: f32) -> Vec3 {
@@ -20,13 +21,7 @@ use spirv_std::num_traits::Float;
         let c = vec3(1.0, 1.0, 1.0);
         let d = vec3(0.263,0.416,0.557);
 
-        let [x, y, z] = (6.28318 * (c * t + d)).to_array();
-
-        vec3(
-            x.cos(),
-            y.cos(),
-            z.cos()
-        ).mul_add(b, a)
+        cos(TAU * (c * t + d)).mul_add(b, a)
     }
 
     // "Entry point" (effectively)
