@@ -80,10 +80,12 @@ mod graphics;
 
 #[derive(EnumString, Display, PartialEq, Eq, Copy, Clone)]
 pub enum RustGPUShader {
-    Simple,
-    Sky,
+    Pixel,
     Compute,
-    Mouse,
+    // One day...
+    //// Mesh,
+    //// Task,
+    //// Audio,
 }
 
 struct CompiledShaderModules {
@@ -133,10 +135,8 @@ fn maybe_watch(
         std::env::set_var("OUT_DIR", env!("OUT_DIR"));
         std::env::set_var("PROFILE", env!("PROFILE"));
         let crate_name = match options.shader {
-            RustGPUShader::Simple => "simple",
-            RustGPUShader::Sky => "sky",
-            RustGPUShader::Compute => "compute",
-            RustGPUShader::Mouse => "mouse",
+            RustGPUShader::Pixel => "pixel",
+            RustGPUShader::Compute => "compute"
         };
         let manifest_dir = env!("CARGO_MANIFEST_DIR");
         let crate_path = [manifest_dir, "shaders", crate_name]
@@ -196,7 +196,7 @@ fn maybe_watch(
 #[derive(StructOpt, Clone)]
 #[structopt(name = "example-runner-wgpu")]
 pub struct Options {
-    #[structopt(short, long, default_value = "Mouse")]
+    #[structopt(short, long, default_value = "Pixel")]
     shader: RustGPUShader,
 
     #[structopt(long)]

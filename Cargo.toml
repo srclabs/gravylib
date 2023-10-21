@@ -27,10 +27,8 @@ spirv-builder = { version = "=0.9.0", features = ["watch"] }
 [workspace]
 resolver = "2"
 members = [
-    "shaders/simple",
     "shaders/compute",
-    "shaders/mouse",
-    "shaders/sky",
+    "shaders/pixel",
     "builder"
 ]
 

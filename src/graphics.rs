@@ -202,14 +202,6 @@ async fn run(
                         width: window.inner_size().width,
                         height: window.inner_size().height,
                         time,
-                        cursor_x,
-                        cursor_y,
-                        drag_start_x,
-                        drag_start_y,
-                        drag_end_x,
-                        drag_end_y,
-                        mouse_button_pressed,
-                        mouse_button_press_time,
                     };
 
                     rpass.set_pipeline(render_pipeline);
