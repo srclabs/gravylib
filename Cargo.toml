@@ -1,6 +1,6 @@
 [package]
 name = "grits"
-version = "0.1.0-alpha.1+1"
+version = "0.1.0-alpha"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 authors = ["Dr. Rubisco <doc@thedocruby.dev>"]
@@ -27,9 +27,7 @@ spirv-builder = { version = "=0.9.0", features = ["watch"] }
 [workspace]
 resolver = "2"
 members = [
-    # "shaders/compute",
-    "shaders/pixel",
-    "builder"
+    "shaders/pixel"
 ]
 
 # See rustc_codegen_spirv/Cargo.toml for details on these features

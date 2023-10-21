@@ -2,7 +2,7 @@ use crate::{maybe_watch, CompiledShaderModules, Options};
 
 use common::ShaderConstants;
 use winit::{
-    event::{ElementState, Event, KeyboardInput, /* MouseButton, */ VirtualKeyCode, WindowEvent},
+    event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
     event_loop::{ControlFlow, EventLoop, EventLoopBuilder},
     window::Window,
 };
@@ -18,17 +18,6 @@ mod shaders {
     #[allow(non_upper_case_globals)]
     pub const main_vs: &str = "main_vs";
 }
-
-/*  Mouse Logic
-fn mouse_button_index(button: MouseButton) -> usize {
-    match button {
-        MouseButton::Left => 0,
-        MouseButton::Middle => 1,
-        MouseButton::Right => 2,
-        MouseButton::Other(i) => 3 + (i as usize),
-    }
-}
-*/
 
 // * Run the main loop
 
@@ -133,15 +122,6 @@ async fn run(
         compiled_shader_modules,
     );
 
-    /*  Mouse Logic
-    let (mut cursor_x, mut cursor_y) = (0.0, 0.0);
-    let (mut drag_start_x, mut drag_start_y) = (0.0, 0.0);
-    let (mut drag_end_x, mut drag_end_y) = (0.0, 0.0);
-    let mut mouse_button_pressed = 0;
-    let mut mouse_button_press_since_last_frame = 0;
-    let mut mouse_button_press_time = [f32::NEG_INFINITY; 3];
-    */
-
     // * Start main loop
 
     let start = std::time::Instant::now();
@@ -221,15 +201,6 @@ async fn run(
 
                     let time = start.elapsed().as_secs_f32();
 
-                    /* Mouse Logic
-                    for (i, press_time) in mouse_button_press_time.iter_mut().enumerate() {
-                        if (mouse_button_press_since_last_frame & (1 << i)) != 0 {
-                            *press_time = time;
-                        }
-                    }
-                    mouse_button_press_since_last_frame = 0;
-                    */
-
                     let push_constants = ShaderConstants {
                         width: window.inner_size().width,
                         height: window.inner_size().height,
@@ -298,40 +269,6 @@ async fn run(
                 *control_flow = ControlFlow::Poll;
             }
             
-            /* Mouse Logic
-            Event::WindowEvent {
-                event: WindowEvent::MouseInput { state, button, .. },
-                ..
-            } => {
-                let mask = 1 << mouse_button_index(button);
-                match state {
-                    ElementState::Pressed => {
-                        mouse_button_pressed |= mask;
-                        mouse_button_press_since_last_frame |= mask;
-
-                        if button == MouseButton::Left {
-                            drag_start_x = cursor_x;
-                            drag_start_y = cursor_y;
-                            drag_end_x = cursor_x;
-                            drag_end_y = cursor_y;
-                        }
-                    }
-                    ElementState::Released => mouse_button_pressed &= !mask,
-                }
-            }
-            Event::WindowEvent {
-                event: WindowEvent::CursorMoved { position, .. },
-                ..
-            } => {
-                cursor_x = position.x as f32;
-                cursor_y = position.y as f32;
-                if (mouse_button_pressed & (1 << mouse_button_index(MouseButton::Left))) != 0 {
-                    drag_end_x = cursor_x;
-                    drag_end_y = cursor_y;
-                }
-            }
-            */
-
             // * Ignore other events
             _ => {}
         }

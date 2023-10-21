@@ -73,7 +73,6 @@
 use std::borrow::Cow;
 use strum::{Display, EnumString};
 
-mod compute;
 mod graphics;
 
 // * Enum for types of grits (shader programs)
@@ -81,12 +80,11 @@ mod graphics;
 #[derive(EnumString, Display, PartialEq, Eq, Copy, Clone)]
 pub enum GritType {
     Pixel,
-    // disabled for now
-    //// Compute,
     // One day...
+    //// Compute,
+    //// Audio,
     //// Mesh,
     //// Task,
-    //// Audio,
 }
 
 // * Struct for compiled shader modules
