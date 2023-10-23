@@ -3,5 +3,5 @@
 use grits::*;
 
 fn main() {
-    execute(GritType::Pixel);
+    execute(ShaderType::Pixel);
 }

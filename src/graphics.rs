@@ -19,6 +19,156 @@ mod shaders {
     pub const main_vs: &str = "main_vs";
 }
 
+// * Program state
+// TODO: Incorporate more of the render pipeline logic here
+
+struct State {
+    instance: wgpu::Instance,
+    surface: wgpu::Surface,
+    adapter: wgpu::Adapter,
+    device: wgpu::Device,
+    queue: wgpu::Queue,
+    config: wgpu::SurfaceConfiguration,
+    size: winit::dpi::PhysicalSize<u32>,
+    window: Window,
+}
+
+impl State {
+    // Creating some of the wgpu types requires async code
+    async fn new(window: Window) -> Self {
+        let size = window.inner_size();
+
+        let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
+            backends: wgpu::util::backend_bits_from_env()
+                .unwrap_or(wgpu::Backends::VULKAN | wgpu::Backends::METAL | wgpu::Backends::DX12),
+            dx12_shader_compiler: wgpu::util::dx12_shader_compiler_from_env().unwrap_or_default(),
+        });
+        
+        let surface = unsafe { instance.create_surface(&window) }
+            .expect("Failed to create surface from window");
+
+        let adapter = instance.request_adapter(
+            &wgpu::RequestAdapterOptions {
+                power_preference: wgpu::PowerPreference::default(),
+                compatible_surface: Some(&surface),
+                force_fallback_adapter: false,
+            },
+        ).await
+        .expect("Failed to find an appropriate adapter");
+    
+        let (device, queue) = adapter
+            .request_device(
+                &wgpu::DeviceDescriptor {
+                    label: None,
+                    features: wgpu::Features::PUSH_CONSTANTS,
+                    limits: wgpu::Limits {
+                        max_push_constant_size: 128,
+                        ..Default::default()
+                    },
+                },
+                None,
+            )
+            .await
+            .expect("Failed to create device");
+
+        let surface_caps = surface.get_capabilities(&adapter);
+
+        let surface_format = surface_caps.formats.iter()
+            .copied()
+            .find(|f| f.is_srgb())            
+            .unwrap_or(surface_caps.formats[0]);
+
+        let config = wgpu::SurfaceConfiguration {
+            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+            format: surface_format,
+            width: size.width,
+            height: size.height,
+            present_mode: surface_caps.present_modes[0],
+            alpha_mode: surface_caps.alpha_modes[0],
+            view_formats: vec![],
+        };
+
+        surface.configure(&device, &config);
+
+        Self {
+            instance,
+            window,
+            surface,
+            adapter,
+            device,
+            queue,
+            config,
+            size,
+        }
+    }
+
+    pub fn window(&self) -> &Window {
+        &self.window
+    }
+
+    fn resize(&mut self, new_size: winit::dpi::PhysicalSize<u32>) {
+        if new_size.width > 0 && new_size.height > 0 {
+            self.size = new_size;
+            self.config.width = new_size.width;
+            self.config.height = new_size.height;
+            self.surface.configure(&self.device, &self.config);
+        }
+    }
+
+    fn input(&mut self, event: &WindowEvent<'_>) -> bool {
+        match event {
+            _ => false,
+        }
+    }
+
+    fn render(&mut self, render_pipeline: &wgpu::RenderPipeline, time: f32) -> Result<(), wgpu::SurfaceError> {
+        let output = self.surface.get_current_texture()?;
+
+        let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
+
+        let mut encoder = self.device
+            .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
+        {
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: None,
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &view,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Clear(wgpu::Color {
+                            r: 1.0,
+                            g: 0.0,
+                            b: 1.0,
+                            a: 1.0,
+                        }),
+                        store: true,
+                    },
+                })],
+                depth_stencil_attachment: None,
+            });
+
+            let push_constants = ShaderConstants {
+                width: self.window().inner_size().width,
+                height: self.window().inner_size().height,
+                time,
+            };
+
+            pass.set_pipeline(render_pipeline);
+            pass.set_push_constants(
+                wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT,
+                0,
+                bytemuck::bytes_of(&push_constants),
+            );
+            pass.draw(0..3, 0..1);
+        }
+
+        self.queue.submit(Some(encoder.finish()));
+        output.present();
+
+        Ok(())
+    }
+}
+
 // * Run the main loop
 
 async fn run(
@@ -27,83 +177,13 @@ async fn run(
     window: Window,
     compiled_shader_modules: CompiledShaderModules,
 ) {
-    // * Create the `wgpu` instance
+    // * Create the state
 
-    let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
-        backends: wgpu::util::backend_bits_from_env()
-        .unwrap_or(wgpu::Backends::VULKAN | wgpu::Backends::METAL),
-        dx12_shader_compiler: wgpu::util::dx12_shader_compiler_from_env().unwrap_or_default(),
-    });
-
-    // * Create the initial surface
-
-    let initial_surface = unsafe { instance.create_surface(&window) }
-            .expect("Failed to create surface from window");
-    
-    // * Initialize the adapter
-
-    let adapter = wgpu::util::initialize_adapter_from_env_or_default(
-        &instance,
-        // Request an adapter which can render to our surface
-        Some(&initial_surface),
-    )
-    .await
-    .expect("Failed to find an appropriate adapter");
-
-    // * Configure the device features & limits
-
-    let mut features = wgpu::Features::PUSH_CONSTANTS;
-    if options.force_spirv_passthru {
-        features |= wgpu::Features::SPIRV_SHADER_PASSTHROUGH;
-    }
-
-    let limits = wgpu::Limits {
-        max_push_constant_size: 128,
-        ..Default::default()
-    };
-
-    // * Create the logical device and command queue with the adapter
-
-    let (device, queue) = adapter
-        .request_device(
-            &wgpu::DeviceDescriptor {
-                label: None,
-                features,
-                limits,
-            },
-            None,
-        )
-        .await
-        .expect("Failed to create device");
-
-    // * Configure surface with device & adapter
-
-    let auto_configure_surface =
-        |adapter: &_, device: &_, surface: wgpu::Surface, size: winit::dpi::PhysicalSize<_>| {
-            let mut surface_config = surface
-                .get_default_config(adapter, size.width, size.height)
-                .unwrap_or_else(|| {
-                    panic!(
-                        "Missing formats/present modes in surface capabilities: {:#?}",
-                        surface.get_capabilities(adapter)
-                    )
-                });
-
-            // FIXME(eddyb) should this be toggled by a CLI arg?
-            // NOTE(eddyb) VSync was disabled in the past, but without VSync,
-            // especially for simpler shaders, you can easily hit thousands
-            // of frames per second, stressing GPUs for no reason.
-            surface_config.present_mode = wgpu::PresentMode::AutoVsync;
-
-            surface.configure(device, &surface_config);
-
-            (surface, surface_config)
-        };
-    let mut surface_with_config = auto_configure_surface(&adapter, &device, initial_surface, window.inner_size());
+    let mut state = State::new(window).await;
 
     // * Create pipeline layout from the shaders on disk
 
-    let pipeline_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+    let pipeline_layout = state.device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
         label: None,
         bind_group_layouts: &[],
         push_constant_ranges: &[wgpu::PushConstantRange {
@@ -116,9 +196,9 @@ async fn run(
 
     let mut render_pipeline = create_pipeline(
         &options,
-        &device,
+        &state.device,
         &pipeline_layout,
-        surface_with_config.1.format,
+        state.config.format,
         compiled_shader_modules,
     );
 
@@ -130,114 +210,35 @@ async fn run(
         // Have the closure take ownership of the resources.
         // `event_loop.run` never returns, therefore we must do this to ensure
         // the resources are properly cleaned up.
-        let _ = (&instance, &adapter, &pipeline_layout);
-        let render_pipeline = &mut render_pipeline;
+        // ? Is any of this needed?
+        let _ = (&state, &pipeline_layout);
+        let _ = &mut render_pipeline;
 
         // * Handle events
-        *control_flow = ControlFlow::Wait;
         match event {
-            Event::MainEventsCleared => {
-                window.request_redraw();
-            }
+            Event::MainEventsCleared =>
+                state.window().request_redraw(),
 
-            // * Resize window
+            // * Handle window events
             Event::WindowEvent {
-                event: WindowEvent::Resized(size),
-                ..
-            } => {
-                if size.width != 0 && size.height != 0 {
-                    // Recreate the swap chain with the new size
-                    let (surface, surface_config) = &mut surface_with_config;
-                    surface_config.width = size.width;
-                    surface_config.height = size.height;
-                    surface.configure(&device, surface_config);
-                }
-            }
+                ref event,
+                window_id,
+            } if window_id == state.window().id() => if !state.input(event) {
+                match event {
 
-            // * Redraw window
-            Event::RedrawRequested(_) => {
-                // FIXME(eddyb) only the mouse shader *really* needs this, could
-                // avoid doing wasteful rendering by special-casing each shader?
-                // (with VSync enabled this can't be *too* bad, thankfully)
-                // FIXME(eddyb) is this the best way to do continuous redraws in
-                // `winit`? (or should we stop using `ControlFlow::Wait`? etc.)
-                window.request_redraw();
-
-                let (surface, surface_config) = &mut surface_with_config;
-                let output = match surface.get_current_texture() {
-                    Ok(surface) => surface,
-                    Err(err) => {
-                        eprintln!("get_current_texture error: {err:?}");
-                        match err {
-                            wgpu::SurfaceError::Lost => {
-                                surface.configure(&device, surface_config);
-                            }
-                            wgpu::SurfaceError::OutOfMemory => {
-                                *control_flow = ControlFlow::Exit;
-                            }
-                            _ => (),
-                        }
-                        return;
-                    }
-                };
-                let output_view = output
-                    .texture
-                    .create_view(&wgpu::TextureViewDescriptor::default());
-                let mut encoder = device
-                    .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
-                {
-                    let mut rpass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                        label: None,
-                        color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                            view: &output_view,
-                            resolve_target: None,
-                            ops: wgpu::Operations {
-                                load: wgpu::LoadOp::Clear(wgpu::Color::GREEN),
-                                store: true,
-                            },
-                        })],
-                        depth_stencil_attachment: None,
-                    });
-
-                    let time = start.elapsed().as_secs_f32();
-
-                    let push_constants = ShaderConstants {
-                        width: window.inner_size().width,
-                        height: window.inner_size().height,
-                        time,
-                    };
-
-                    rpass.set_pipeline(render_pipeline);
-                    rpass.set_push_constants(
-                        wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT,
-                        0,
-                        bytemuck::bytes_of(&push_constants),
-                    );
-                    rpass.draw(0..3, 0..1);
-                }
-
-                queue.submit(Some(encoder.finish()));
-                output.present();
-            }
-
-            // * Close window on escape
-            Event::WindowEvent {
-                event:
+                    // * Close window
                     WindowEvent::CloseRequested
                     | WindowEvent::KeyboardInput {
                         input:
                             KeyboardInput {
+                                state: ElementState::Pressed,
                                 virtual_keycode: Some(VirtualKeyCode::Escape),
                                 ..
                             },
                         ..
-                    },
-                ..
-            } => *control_flow = ControlFlow::Exit,
+                    } => *control_flow = ControlFlow::Exit,
 
-            // * F11 Fullscreen toggle
-            Event::WindowEvent {
-                event:
+                    // * Toggle fullscreen
                     WindowEvent::KeyboardInput {
                         input:
                             KeyboardInput {
@@ -246,26 +247,59 @@ async fn run(
                                 ..
                             },
                         ..
+                    } => {
+                        if state.window().fullscreen().is_some() {
+                            state.window().set_fullscreen(None);
+                        } else {
+                            state.window().set_fullscreen(Some(winit::window::Fullscreen::Borderless(None)));
+                        }
                     },
-                ..
-            } => {
-                if window.fullscreen().is_some() {
-                    window.set_fullscreen(None);
-                } else {
-                    window.set_fullscreen(Some(winit::window::Fullscreen::Borderless(None)));
+
+                    // * Resize window
+                    WindowEvent::Resized(physical_size) => {
+                        state.resize(*physical_size);
+                    }
+                    WindowEvent::ScaleFactorChanged { new_inner_size, .. } => {
+                        state.resize(**new_inner_size);
+                    }
+
+                    // * Ignore other window events
+                    _ => {}
                 }
-            }
+            },
+
+            // * Redraw window
+            Event::RedrawRequested(_) => 
+                match state.render(
+                    &render_pipeline,
+                    start.elapsed().as_secs_f32()
+                ) {
+                    Ok(()) => (),
+                    Err(err) => {
+                        eprintln!("Error! Could not find surface texture to display to: {err:?}");
+                        match err {
+                            wgpu::SurfaceError::Lost => {
+                                state.surface.configure(&state.device, &state.config);
+                            }
+                            wgpu::SurfaceError::OutOfMemory => {
+                                *control_flow = ControlFlow::Exit;
+                            }
+                            _ => (),
+                        }
+                        return;
+                    }
+                },
 
             // * Shader hot-reloading?
             Event::UserEvent(new_module) => {
-                *render_pipeline = create_pipeline(
+                render_pipeline = create_pipeline(
                     &options,
-                    &device,
+                    &state.device,
                     &pipeline_layout,
-                    surface_with_config.1.format,
+                    state.config.format,
                     new_module,
                 );
-                window.request_redraw();
+                state.window().request_redraw();
                 *control_flow = ControlFlow::Poll;
             }
             
@@ -276,6 +310,7 @@ async fn run(
 }
 
 // * Create the render pipeline
+// TODO: Understand this
 
 fn create_pipeline(
     options: &Options,
@@ -350,6 +385,9 @@ fn create_pipeline(
         multiview: None,
     })
 }
+
+// * Start the main loop
+// TODO: Understand this
 
 #[allow(clippy::match_wild_err_arm)]
 pub fn start(

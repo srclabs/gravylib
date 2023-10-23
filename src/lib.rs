@@ -75,18 +75,6 @@ use strum::{Display, EnumString};
 
 mod graphics;
 
-// * Enum for types of grits (shader programs)
-
-#[derive(EnumString, Display, PartialEq, Eq, Copy, Clone)]
-pub enum GritType {
-    Pixel,
-    // One day...
-    //// Compute,
-    //// Audio,
-    //// Mesh,
-    //// Task,
-}
-
 // * Struct for compiled shader modules
 
 struct CompiledShaderModules {
@@ -138,8 +126,8 @@ fn maybe_watch(
         // under cargo by setting these environment variables.
         std::env::set_var("OUT_DIR", env!("OUT_DIR"));
         std::env::set_var("PROFILE", env!("PROFILE"));
-        let crate_name = match options.grit {
-            GritType::Pixel => "pixel",
+        let crate_name = match options.shader {
+            ShaderType::Pixel => "pixel",
             //// Grit::Compute => "compute"
         };
         let manifest_dir = env!("CARGO_MANIFEST_DIR");
@@ -197,17 +185,30 @@ fn maybe_watch(
     }
 }
 
+// /*
+// * Enum for types of grits (shader programs)
+
+#[derive(EnumString, Display, PartialEq, Eq, Copy, Clone)]
+pub enum ShaderType {
+    Pixel,
+    // One day...
+    //// Compute,
+    //// Audio,
+    //// Mesh,
+    //// Task,
+}
+
 // * Struct for command line options
 
 #[derive(Clone)]
 pub struct Options {
-    grit: GritType,
+    shader: ShaderType,
     force_spirv_passthru: bool,
 }
 
 // * Main function
 
-pub fn execute(grit: GritType) {
+pub fn execute(shader: ShaderType) {
 
     /* Compute Logic
     if options.grit == Grit::Compute {
@@ -216,11 +217,37 @@ pub fn execute(grit: GritType) {
     */
 
     let options = Options {
-        grit,
+        shader,
         force_spirv_passthru: false,
     };
 
     graphics::start(
         &options,
     );
+}
+
+// */
+
+pub struct RenderGraph {
+
+}
+
+impl RenderGraph {
+
+}
+
+pub struct RenderNode {
+
+}
+
+impl RenderNode {
+
+}
+
+pub struct RenderBuffer {
+
+}
+
+impl RenderBuffer {
+    
 }
