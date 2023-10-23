@@ -1,4 +1,4 @@
-use crate::CompiledShaderModules;
+use std::borrow::Cow;
 
 use common::ShaderConstants;
 use winit::{
@@ -9,8 +9,6 @@ use winit::{
 
 // * Helpers
 
-// ? Do we need this?
-// TODO: Understand this
 mod shaders {
     // The usual usecase of code generation is always building in build.rs, and so the codegen
     // always happens. However, we want to both test code generation (on android) and runtime
@@ -21,8 +19,7 @@ mod shaders {
     pub const main_vs: &str = "main_vs";
 }
 
-// TODO: Understand this
-fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration, shaders: &CompiledShaderModules) -> wgpu::RenderPipeline {
+fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) -> wgpu::RenderPipeline {
 
     let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
         label: None,
@@ -33,39 +30,19 @@ fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration, sh
         }],
     });
 
-    // FIXME(eddyb) automate this decision by default.
-    let create_module = |module| {
-        let wgpu::ShaderModuleDescriptorSpirV { label, source } = module;
-        device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label,
-            source: wgpu::ShaderSource::SpirV(source),
-        })
-    };
-
-    let vs_entry_point = shaders::main_vs;
-    let fs_entry_point = shaders::main_fs;
-
-    let vs_module_descr = shaders.spv_module_for_entry_point(vs_entry_point);
-    let fs_module_descr = shaders.spv_module_for_entry_point(fs_entry_point);
-
-    // HACK(eddyb) avoid calling `device.create_shader_module` twice unnecessarily.
-    let vs_fs_same_module = std::ptr::eq(&vs_module_descr.source[..], &fs_module_descr.source[..]);
-
-    let vs_module = &create_module(vs_module_descr);
-    let fs_module;
-    let fs_module = if vs_fs_same_module {
-        vs_module
-    } else {
-        fs_module = create_module(fs_module_descr);
-        &fs_module
-    };
+    let spirv = &std::fs::read(env!("pixel.spv")).unwrap();
+    let spirv = Cow::Owned(wgpu::util::make_spirv_raw(spirv).into_owned());
+    let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+        label: None,
+        source: wgpu::ShaderSource::SpirV(spirv),
+    });
 
     device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
         label: None,
         layout: Some(&layout),
         vertex: wgpu::VertexState {
-            module: vs_module,
-            entry_point: vs_entry_point,
+            module: &module,
+            entry_point: shaders::main_vs,
             buffers: &[],
         },
         primitive: wgpu::PrimitiveState {
@@ -84,8 +61,8 @@ fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration, sh
             alpha_to_coverage_enabled: false,
         },
         fragment: Some(wgpu::FragmentState {
-            module: fs_module,
-            entry_point: fs_entry_point,
+            module: &module,
+            entry_point: shaders::main_fs,
             targets: &[Some(wgpu::ColorTargetState {
                 format: config.format,
                 blend: None,
@@ -113,7 +90,7 @@ struct State {
 
 impl State {
     // Creating some of the wgpu types requires async code
-    async fn new(window: Window, shaders: CompiledShaderModules) -> Self {
+    async fn new(window: Window) -> Self {
         let size = window.inner_size();
 
         let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
@@ -168,7 +145,7 @@ impl State {
 
         surface.configure(&device, &config);
 
-        let pipeline = build_pipeline(&device, &config, &shaders);
+        let pipeline = build_pipeline(&device, &config);
 
         Self {
             instance,
@@ -248,22 +225,17 @@ impl State {
 
         Ok(())
     }
-
-    fn rebuild(&mut self, new_shaders: &CompiledShaderModules) {
-        self.pipeline = build_pipeline(&self.device, &self.config, new_shaders);
-    }
 }
 
 // * Run the main loop
 
 pub(crate) async fn run(
-    event_loop: EventLoop<CompiledShaderModules>,
+    event_loop: EventLoop<()>,
     window: Window,
-    shaders: CompiledShaderModules,
 ) {
     // * Create the state
 
-    let mut state = State::new(window, shaders).await;
+    let mut state = State::new(window).await;
 
     // * Start main loop
 
@@ -350,13 +322,6 @@ pub(crate) async fn run(
                         return;
                     }
                 },
-
-            // * Rebuild pipeline when shaders are modified
-            Event::UserEvent(new_module) => {
-                state.rebuild(&new_module);
-                state.window().request_redraw();
-                *control_flow = ControlFlow::Poll;
-            }
             
             // * Ignore other events
             _ => {}
