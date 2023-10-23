@@ -9,6 +9,8 @@ use winit::{
 
 // * Helpers
 
+// ? Do we need this?
+// TODO: Understand this
 mod shaders {
     // The usual usecase of code generation is always building in build.rs, and so the codegen
     // always happens. However, we want to both test code generation (on android) and runtime
@@ -19,9 +21,84 @@ mod shaders {
     pub const main_vs: &str = "main_vs";
 }
 
-// * Program state
-// TODO: Incorporate more of the render pipeline logic here
+// TODO: Understand this
+fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration, shaders: &CompiledShaderModules) -> wgpu::RenderPipeline {
 
+    let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: None,
+        bind_group_layouts: &[],
+        push_constant_ranges: &[wgpu::PushConstantRange {
+            stages: wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT,
+            range: 0..std::mem::size_of::<ShaderConstants>() as u32,
+        }],
+    });
+
+    // FIXME(eddyb) automate this decision by default.
+    let create_module = |module| {
+        let wgpu::ShaderModuleDescriptorSpirV { label, source } = module;
+        device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label,
+            source: wgpu::ShaderSource::SpirV(source),
+        })
+    };
+
+    let vs_entry_point = shaders::main_vs;
+    let fs_entry_point = shaders::main_fs;
+
+    let vs_module_descr = shaders.spv_module_for_entry_point(vs_entry_point);
+    let fs_module_descr = shaders.spv_module_for_entry_point(fs_entry_point);
+
+    // HACK(eddyb) avoid calling `device.create_shader_module` twice unnecessarily.
+    let vs_fs_same_module = std::ptr::eq(&vs_module_descr.source[..], &fs_module_descr.source[..]);
+
+    let vs_module = &create_module(vs_module_descr);
+    let fs_module;
+    let fs_module = if vs_fs_same_module {
+        vs_module
+    } else {
+        fs_module = create_module(fs_module_descr);
+        &fs_module
+    };
+
+    device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        label: None,
+        layout: Some(&layout),
+        vertex: wgpu::VertexState {
+            module: vs_module,
+            entry_point: vs_entry_point,
+            buffers: &[],
+        },
+        primitive: wgpu::PrimitiveState {
+            topology: wgpu::PrimitiveTopology::TriangleList,
+            strip_index_format: None,
+            front_face: wgpu::FrontFace::Ccw,
+            cull_mode: None,
+            unclipped_depth: false,
+            polygon_mode: wgpu::PolygonMode::Fill,
+            conservative: false,
+        },
+        depth_stencil: None,
+        multisample: wgpu::MultisampleState {
+            count: 1,
+            mask: !0,
+            alpha_to_coverage_enabled: false,
+        },
+        fragment: Some(wgpu::FragmentState {
+            module: fs_module,
+            entry_point: fs_entry_point,
+            targets: &[Some(wgpu::ColorTargetState {
+                format: config.format,
+                blend: None,
+                write_mask: wgpu::ColorWrites::ALL,
+            })],
+        }),
+        multiview: None,
+    })
+}
+
+// * Program state
+
+#[allow(dead_code)]
 struct State {
     instance: wgpu::Instance,
     surface: wgpu::Surface,
@@ -31,11 +108,12 @@ struct State {
     config: wgpu::SurfaceConfiguration,
     size: winit::dpi::PhysicalSize<u32>,
     window: Window,
+    pipeline: wgpu::RenderPipeline,
 }
 
 impl State {
     // Creating some of the wgpu types requires async code
-    async fn new(window: Window) -> Self {
+    async fn new(window: Window, shaders: CompiledShaderModules) -> Self {
         let size = window.inner_size();
 
         let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
@@ -90,6 +168,8 @@ impl State {
 
         surface.configure(&device, &config);
 
+        let pipeline = build_pipeline(&device, &config, &shaders);
+
         Self {
             instance,
             window,
@@ -99,6 +179,7 @@ impl State {
             queue,
             config,
             size,
+            pipeline,
         }
     }
 
@@ -121,7 +202,7 @@ impl State {
         }
     }
 
-    fn render(&mut self, render_pipeline: &wgpu::RenderPipeline, time: f32) -> Result<(), wgpu::SurfaceError> {
+    fn render(&mut self, time: f32) -> Result<(), wgpu::SurfaceError> {
         let output = self.surface.get_current_texture()?;
 
         let view = output.texture.create_view(&wgpu::TextureViewDescriptor::default());
@@ -153,7 +234,7 @@ impl State {
                 time,
             };
 
-            pass.set_pipeline(render_pipeline);
+            pass.set_pipeline(&self.pipeline);
             pass.set_push_constants(
                 wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT,
                 0,
@@ -167,40 +248,22 @@ impl State {
 
         Ok(())
     }
+
+    fn rebuild(&mut self, new_shaders: &CompiledShaderModules) {
+        self.pipeline = build_pipeline(&self.device, &self.config, new_shaders);
+    }
 }
 
 // * Run the main loop
 
 async fn run(
-    options: Options,
     event_loop: EventLoop<CompiledShaderModules>,
     window: Window,
-    compiled_shader_modules: CompiledShaderModules,
+    shaders: CompiledShaderModules,
 ) {
     // * Create the state
 
-    let mut state = State::new(window).await;
-
-    // * Create pipeline layout from the shaders on disk
-
-    let pipeline_layout = state.device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-        label: None,
-        bind_group_layouts: &[],
-        push_constant_ranges: &[wgpu::PushConstantRange {
-            stages: wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT,
-            range: 0..std::mem::size_of::<ShaderConstants>() as u32,
-        }],
-    });
-
-    // * Create the render pipeline
-
-    let mut render_pipeline = create_pipeline(
-        &options,
-        &state.device,
-        &pipeline_layout,
-        state.config.format,
-        compiled_shader_modules,
-    );
+    let mut state = State::new(window, shaders).await;
 
     // * Start main loop
 
@@ -210,9 +273,8 @@ async fn run(
         // Have the closure take ownership of the resources.
         // `event_loop.run` never returns, therefore we must do this to ensure
         // the resources are properly cleaned up.
-        // ? Is any of this needed?
-        let _ = (&state, &pipeline_layout);
-        let _ = &mut render_pipeline;
+        // ? Is this needed?
+        let _ = &state;
 
         // * Handle events
         match event {
@@ -271,7 +333,6 @@ async fn run(
             // * Redraw window
             Event::RedrawRequested(_) => 
                 match state.render(
-                    &render_pipeline,
                     start.elapsed().as_secs_f32()
                 ) {
                     Ok(()) => (),
@@ -290,15 +351,9 @@ async fn run(
                     }
                 },
 
-            // * Shader hot-reloading?
+            // * Rebuild pipeline when shaders are modified
             Event::UserEvent(new_module) => {
-                render_pipeline = create_pipeline(
-                    &options,
-                    &state.device,
-                    &pipeline_layout,
-                    state.config.format,
-                    new_module,
-                );
+                state.rebuild(&new_module);
                 state.window().request_redraw();
                 *control_flow = ControlFlow::Poll;
             }
@@ -309,98 +364,21 @@ async fn run(
     });
 }
 
-// * Create the render pipeline
-// TODO: Understand this
-
-fn create_pipeline(
-    options: &Options,
-    device: &wgpu::Device,
-    pipeline_layout: &wgpu::PipelineLayout,
-    surface_format: wgpu::TextureFormat,
-    compiled_shader_modules: CompiledShaderModules,
-) -> wgpu::RenderPipeline {
-    // FIXME(eddyb) automate this decision by default.
-    let create_module = |module| {
-        if options.force_spirv_passthru {
-            unsafe { device.create_shader_module_spirv(&module) }
-        } else {
-            let wgpu::ShaderModuleDescriptorSpirV { label, source } = module;
-            device.create_shader_module(wgpu::ShaderModuleDescriptor {
-                label,
-                source: wgpu::ShaderSource::SpirV(source),
-            })
-        }
-    };
-
-    let vs_entry_point = shaders::main_vs;
-    let fs_entry_point = shaders::main_fs;
-
-    let vs_module_descr = compiled_shader_modules.spv_module_for_entry_point(vs_entry_point);
-    let fs_module_descr = compiled_shader_modules.spv_module_for_entry_point(fs_entry_point);
-
-    // HACK(eddyb) avoid calling `device.create_shader_module` twice unnecessarily.
-    let vs_fs_same_module = std::ptr::eq(&vs_module_descr.source[..], &fs_module_descr.source[..]);
-
-    let vs_module = &create_module(vs_module_descr);
-    let fs_module;
-    let fs_module = if vs_fs_same_module {
-        vs_module
-    } else {
-        fs_module = create_module(fs_module_descr);
-        &fs_module
-    };
-
-    device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-        label: None,
-        layout: Some(pipeline_layout),
-        vertex: wgpu::VertexState {
-            module: vs_module,
-            entry_point: vs_entry_point,
-            buffers: &[],
-        },
-        primitive: wgpu::PrimitiveState {
-            topology: wgpu::PrimitiveTopology::TriangleList,
-            strip_index_format: None,
-            front_face: wgpu::FrontFace::Ccw,
-            cull_mode: None,
-            unclipped_depth: false,
-            polygon_mode: wgpu::PolygonMode::Fill,
-            conservative: false,
-        },
-        depth_stencil: None,
-        multisample: wgpu::MultisampleState {
-            count: 1,
-            mask: !0,
-            alpha_to_coverage_enabled: false,
-        },
-        fragment: Some(wgpu::FragmentState {
-            module: fs_module,
-            entry_point: fs_entry_point,
-            targets: &[Some(wgpu::ColorTargetState {
-                format: surface_format,
-                blend: None,
-                write_mask: wgpu::ColorWrites::ALL,
-            })],
-        }),
-        multiview: None,
-    })
-}
-
-// * Start the main loop
-// TODO: Understand this
+// * Initialize the main loop
 
 #[allow(clippy::match_wild_err_arm)]
 pub fn start(
-    options: &Options,
-) {
+    options: &Options, // TODO: Eliminate this
+) { 
+    // create event loop with hot reloading (via user events)
     let mut event_loop_builder = EventLoopBuilder::with_user_event();
     env_logger::init();
     let event_loop = event_loop_builder.build();
 
-    // Build the shader before we pop open a window, since it might take a while.
-    let initial_shader = maybe_watch(
+    // build the shaders and watch for changes
+    let shaders = maybe_watch(
         options,
-        {
+        { // send reloaded shader modules to event loop (via a user event)
             let proxy = event_loop.create_proxy();
             Some(Box::new(move |res| match proxy.send_event(res) {
                 Ok(it) => it,
@@ -410,15 +388,17 @@ pub fn start(
         },
     );
 
+    // create window
     let window = winit::window::WindowBuilder::new()
-        .with_title("Rust GPU - wgpu")
+        .with_title("grits alpha (WIP)")
         .with_inner_size(winit::dpi::LogicalSize::new(1280.0, 720.0))
         .build(&event_loop)
         .unwrap();
+
+    // run the main loop
     futures::executor::block_on(run(
-        options.clone(),
         event_loop,
         window,
-        initial_shader,
+        shaders,
     ));
 }
