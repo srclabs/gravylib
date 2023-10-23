@@ -14,9 +14,6 @@ mod pixel;
 use common::*;
 use pixel::pixel;
 
-// * Shader constants
-// FIXME(theodcruby) These should be abstracted eventually.
-
 // FIXME(thedocruby) These should be abstracted eventually.
 #[spirv(fragment)]
 pub fn main_fs(

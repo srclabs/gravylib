@@ -7,18 +7,6 @@ use winit::{
     window::Window,
 };
 
-// * Helpers
-
-mod helpers {
-    // The usual usecase of code generation is always building in build.rs, and so the codegen
-    // always happens. However, we want to both test code generation (on android) and runtime
-    // compilation (on desktop), so manually fill in what would have been codegenned for desktop.
-    #[allow(non_upper_case_globals)]
-    pub const main_fs: &str = "main_fs";
-    #[allow(non_upper_case_globals)]
-    pub const main_vs: &str = "main_vs";
-}
-
 fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) -> wgpu::RenderPipeline {
 
     let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {

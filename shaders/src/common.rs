@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+
 // Imports
 use crate::*;
 // use core::f32::consts::PI; (example)

@@ -1,5 +1,3 @@
-// * Standard imports.
-// FIXME(thedocruby) These should be abstracted eventually.
 #![cfg_attr(target_arch = "spirv", no_std)]
 #![deny(warnings)]
 use spirv_std::*;
