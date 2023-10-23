@@ -764,12 +764,20 @@ dependencies = [
  "cfg-if",
  "env_logger",
  "futures",
- "shaders",
+ "gravy_helpers",
  "spirv-builder",
  "structopt",
  "strum",
  "wgpu",
  "winit",
+]
+
+[[package]]
+name = "gravy_helpers"
+version = "0.0.0"
+dependencies = [
+ "bytemuck",
+ "spirv-std",
 ]
 
 [[package]]
@@ -1426,13 +1434,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
-name = "pixel-vs"
-version = "0.0.0"
-dependencies = [
- "spirv-std",
-]
-
-[[package]]
 name = "pkg-config"
 version = "0.3.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1760,7 +1761,7 @@ dependencies = [
 name = "shaders"
 version = "0.0.0"
 dependencies = [
- "bytemuck",
+ "gravy_helpers",
  "spirv-std",
 ]
 

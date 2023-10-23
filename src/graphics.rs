@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use shaders::ShaderConstants;
+use gravy_helpers::ShaderConstants;
 use winit::{
     event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
@@ -43,8 +43,8 @@ fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) ->
         label: None,
         layout: Some(&layout),
         vertex: wgpu::VertexState {
-            module: &load_shader(device, env!("pixel_vs.spv")),
-            entry_point: helpers::main_vs,
+            module: &load_shader(device, env!("gravy_helpers.spv")),
+            entry_point: "pixel_vs",
             buffers: &[],
         },
         primitive: wgpu::PrimitiveState {
@@ -64,7 +64,7 @@ fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) ->
         },
         fragment: Some(wgpu::FragmentState {
             module: &load_shader(device, env!("shaders.spv")),
-            entry_point: helpers::main_fs,
+            entry_point: "main_fs",
             targets: &[Some(wgpu::ColorTargetState {
                 format: config.format,
                 blend: None,

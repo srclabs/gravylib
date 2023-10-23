@@ -4,6 +4,7 @@
 #![deny(warnings)]
 use spirv_std::*;
 use glam::*;
+use gravy_helpers::*;
 #[cfg(target_arch = "spirv")]
 use spirv_std::num_traits::Float;
 
@@ -15,14 +16,6 @@ use pixel::pixel;
 
 // * Shader constants
 // FIXME(theodcruby) These should be abstracted eventually.
-use bytemuck::{Pod, Zeroable};
-#[derive(Copy, Clone, Pod, Zeroable)]
-#[repr(C)]
-pub struct ShaderConstants {
-    pub width: u32,
-    pub height: u32,
-    pub time: f32,
-}
 
 // FIXME(thedocruby) These should be abstracted eventually.
 #[spirv(fragment)]
