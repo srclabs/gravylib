@@ -30,7 +30,8 @@ spirv-builder = { version = "=0.9.0", features = ["watch"] }
 [workspace]
 resolver = "2"
 members = [
-    "shaders/pixel"
+    "shaders/shader",
+    "pixel-vs"
 ]
 
 # See rustc_codegen_spirv/Cargo.toml for details on these features

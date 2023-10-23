@@ -11,7 +11,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     // build.rs. So, export it to crate compilation as well.
     let profile = env::var("PROFILE").unwrap();
     println!("cargo:rustc-env=PROFILE={profile}");
-    SpirvBuilder::new("shaders/pixel", "spirv-unknown-vulkan1.1")
+    SpirvBuilder::new("shaders/shader", "spirv-unknown-vulkan1.1")
+        .print_metadata(MetadataPrintout::Full)
+        .build()?;
+    SpirvBuilder::new("pixel-vs", "spirv-unknown-vulkan1.1")
         .print_metadata(MetadataPrintout::Full)
         .build()?;
     Ok(())

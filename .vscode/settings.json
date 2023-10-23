@@ -1,6 +1,7 @@
 {
     "rust-analyzer.linkedProjects": [
         "./shaders/common/Cargo.toml",
-        "./shaders/pixel/Cargo.toml",
+        "./shaders/shader/Cargo.toml",
+        "./pixel-vs/Cargo.toml"
     ]
 }

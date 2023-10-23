@@ -1,5 +1,5 @@
 [package]
-name = "pixel"
+name = "pixel-vs"
 version = "0.0.0"
 publish = false
 authors.workspace = true
@@ -11,5 +11,4 @@ repository.workspace = true
 crate-type = ["lib", "dylib"]
 
 [dependencies]
-common = { path = "../../shaders/common" }
 spirv-std = { workspace = true }

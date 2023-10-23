@@ -30,18 +30,20 @@ fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) ->
         }],
     });
 
-    let spirv = &std::fs::read(env!("pixel.spv")).unwrap();
-    let spirv = Cow::Owned(wgpu::util::make_spirv_raw(spirv).into_owned());
-    let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-        label: None,
-        source: wgpu::ShaderSource::SpirV(spirv),
-    });
+    fn load_shader(device: &wgpu::Device, path: &str) -> wgpu::ShaderModule {
+        let spirv = &std::fs::read(path).unwrap();
+        let spirv = Cow::Owned(wgpu::util::make_spirv_raw(spirv).into_owned());
+        device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: None,
+            source: wgpu::ShaderSource::SpirV(spirv),
+        })
+    }
 
     device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
         label: None,
         layout: Some(&layout),
         vertex: wgpu::VertexState {
-            module: &module,
+            module: &load_shader(device, env!("pixel_vs.spv")),
             entry_point: shaders::main_vs,
             buffers: &[],
         },
@@ -61,7 +63,7 @@ fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) ->
             alpha_to_coverage_enabled: false,
         },
         fragment: Some(wgpu::FragmentState {
-            module: &module,
+            module: &load_shader(device, env!("shader.spv")),
             entry_point: shaders::main_fs,
             targets: &[Some(wgpu::ColorTargetState {
                 format: config.format,
