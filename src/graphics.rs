@@ -1,9 +1,9 @@
-use crate::{maybe_watch, CompiledShaderModules, Options};
+use crate::CompiledShaderModules;
 
 use common::ShaderConstants;
 use winit::{
     event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
-    event_loop::{ControlFlow, EventLoop, EventLoopBuilder},
+    event_loop::{ControlFlow, EventLoop},
     window::Window,
 };
 
@@ -256,7 +256,7 @@ impl State {
 
 // * Run the main loop
 
-async fn run(
+pub(crate) async fn run(
     event_loop: EventLoop<CompiledShaderModules>,
     window: Window,
     shaders: CompiledShaderModules,
@@ -362,43 +362,4 @@ async fn run(
             _ => {}
         }
     });
-}
-
-// * Initialize the main loop
-
-#[allow(clippy::match_wild_err_arm)]
-pub fn start(
-    options: &Options, // TODO: Eliminate this
-) { 
-    // create event loop with hot reloading (via user events)
-    let mut event_loop_builder = EventLoopBuilder::with_user_event();
-    env_logger::init();
-    let event_loop = event_loop_builder.build();
-
-    // build the shaders and watch for changes
-    let shaders = maybe_watch(
-        options,
-        { // send reloaded shader modules to event loop (via a user event)
-            let proxy = event_loop.create_proxy();
-            Some(Box::new(move |res| match proxy.send_event(res) {
-                Ok(it) => it,
-                // ShaderModuleDescriptor is not `Debug`, so can't use unwrap/expect
-                Err(_err) => panic!("Event loop dead"),
-            }))
-        },
-    );
-
-    // create window
-    let window = winit::window::WindowBuilder::new()
-        .with_title("grits alpha (WIP)")
-        .with_inner_size(winit::dpi::LogicalSize::new(1280.0, 720.0))
-        .build(&event_loop)
-        .unwrap();
-
-    // run the main loop
-    futures::executor::block_on(run(
-        event_loop,
-        window,
-        shaders,
-    ));
 }

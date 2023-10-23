@@ -71,13 +71,14 @@
 // #![allow()]
 
 use std::borrow::Cow;
-use strum::{Display, EnumString};
+use winit::event_loop::EventLoopBuilder;
+use crate::graphics::run;
 
 mod graphics;
 
 // * Struct for compiled shader modules
 
-struct CompiledShaderModules {
+pub(crate) struct CompiledShaderModules {
     named_spv_modules: Vec<(Option<String>, wgpu::ShaderModuleDescriptorSpirV<'static>)>,
 }
 
@@ -111,7 +112,7 @@ impl CompiledShaderModules {
 // TODO(thedocruby) Try to understand this...
 
 fn maybe_watch(
-    options: &Options,on_watch: Option<
+    on_watch: Option<
         Box<dyn FnMut(CompiledShaderModules) + Send + 'static>,
     >,
 ) -> CompiledShaderModules {
@@ -126,31 +127,15 @@ fn maybe_watch(
         // under cargo by setting these environment variables.
         std::env::set_var("OUT_DIR", env!("OUT_DIR"));
         std::env::set_var("PROFILE", env!("PROFILE"));
-        let crate_name = match options.shader {
-            ShaderType::Pixel => "pixel",
-            //// Grit::Compute => "compute"
-        };
+        let crate_name = "pixel";
         let manifest_dir = env!("CARGO_MANIFEST_DIR");
         let crate_path = [manifest_dir, "shaders", crate_name]
             .iter()
             .copied()
             .collect::<PathBuf>();
 
-        let has_debug_printf = options.force_spirv_passthru;
-
         let builder = SpirvBuilder::new(crate_path, "spirv-unknown-vulkan1.1")
-            .print_metadata(MetadataPrintout::None)
-            .shader_panic_strategy(if has_debug_printf {
-                spirv_builder::ShaderPanicStrategy::DebugPrintfThenExit {
-                    print_inputs: true,
-                    print_backtrace: true,
-                }
-            } else {
-                spirv_builder::ShaderPanicStrategy::SilentExit
-            })
-            // HACK(eddyb) needed because of `debugPrintf` instrumentation limitations
-            // (see https://github.com/KhronosGroup/SPIRV-Tools/issues/4892).
-            .multimodule(has_debug_printf);
+            .print_metadata(MetadataPrintout::None);
         let initial_result = if let Some(mut f) = on_watch {
             builder
                 .watch(move |compile_result| f(handle_compile_result(compile_result)))
@@ -185,69 +170,37 @@ fn maybe_watch(
     }
 }
 
-// /*
-// * Enum for types of grits (shader programs)
-
-#[derive(EnumString, Display, PartialEq, Eq, Copy, Clone)]
-pub enum ShaderType {
-    Pixel,
-    // One day...
-    //// Compute,
-    //// Audio,
-    //// Mesh,
-    //// Task,
-}
-
-// * Struct for command line options
-
-#[derive(Clone)]
-pub struct Options {
-    shader: ShaderType,
-    force_spirv_passthru: bool,
-}
-
 // * Main function
 
-pub fn execute(shader: ShaderType) {
+pub fn execute() {
+    // create event loop with hot reloading (via user events)
+    let mut event_loop_builder = EventLoopBuilder::with_user_event();
+    env_logger::init();
+    let event_loop = event_loop_builder.build();
 
-    /* Compute Logic
-    if options.grit == Grit::Compute {
-        return compute::start(&options);
-    }
-    */
-
-    let options = Options {
-        shader,
-        force_spirv_passthru: false,
-    };
-
-    graphics::start(
-        &options,
+    // build the shaders and watch for changes
+    let shaders = maybe_watch(
+        { // send reloaded shader modules to event loop (via a user event)
+            let proxy = event_loop.create_proxy();
+            Some(Box::new(move |res| match proxy.send_event(res) {
+                Ok(it) => it,
+                // ShaderModuleDescriptor is not `Debug`, so can't use unwrap/expect
+                Err(_err) => panic!("Event loop dead"),
+            }))
+        },
     );
-}
 
-// */
+    // create window
+    let window = winit::window::WindowBuilder::new()
+        .with_title("grits alpha (WIP)")
+        .with_inner_size(winit::dpi::LogicalSize::new(1280.0, 720.0))
+        .build(&event_loop)
+        .unwrap();
 
-pub struct RenderGraph {
-
-}
-
-impl RenderGraph {
-
-}
-
-pub struct RenderNode {
-
-}
-
-impl RenderNode {
-
-}
-
-pub struct RenderBuffer {
-
-}
-
-impl RenderBuffer {
-    
+    // run the main loop
+    futures::executor::block_on(run(
+        event_loop,
+        window,
+        shaders,
+    ));
 }
