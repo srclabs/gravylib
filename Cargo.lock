@@ -323,14 +323,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bf43edc576402991846b093a7ca18a3477e0ef9c588cde84964b5d3e43016642"
 
 [[package]]
-name = "common"
-version = "0.0.0"
-dependencies = [
- "bytemuck",
- "spirv-std",
-]
-
-[[package]]
 name = "convert_case"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -770,9 +762,9 @@ version = "0.1.0-alpha"
 dependencies = [
  "bytemuck",
  "cfg-if",
- "common",
  "env_logger",
  "futures",
+ "shaders",
  "spirv-builder",
  "structopt",
  "strum",
@@ -1765,10 +1757,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "shader"
+name = "shaders"
 version = "0.0.0"
 dependencies = [
- "common",
+ "bytemuck",
  "spirv-std",
 ]
 

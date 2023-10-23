@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use common::ShaderConstants;
+use shaders::ShaderConstants;
 use winit::{
     event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
@@ -9,7 +9,7 @@ use winit::{
 
 // * Helpers
 
-mod shaders {
+mod helpers {
     // The usual usecase of code generation is always building in build.rs, and so the codegen
     // always happens. However, we want to both test code generation (on android) and runtime
     // compilation (on desktop), so manually fill in what would have been codegenned for desktop.
@@ -44,7 +44,7 @@ fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) ->
         layout: Some(&layout),
         vertex: wgpu::VertexState {
             module: &load_shader(device, env!("pixel_vs.spv")),
-            entry_point: shaders::main_vs,
+            entry_point: helpers::main_vs,
             buffers: &[],
         },
         primitive: wgpu::PrimitiveState {
@@ -63,8 +63,8 @@ fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) ->
             alpha_to_coverage_enabled: false,
         },
         fragment: Some(wgpu::FragmentState {
-            module: &load_shader(device, env!("shader.spv")),
-            entry_point: shaders::main_fs,
+            module: &load_shader(device, env!("shaders.spv")),
+            entry_point: helpers::main_fs,
             targets: &[Some(wgpu::ColorTargetState {
                 format: config.format,
                 blend: None,

@@ -17,7 +17,7 @@ futures = { version = "0.3", default-features = false, features = ["std", "execu
 wgpu = { version = "0.17", features = ["spirv", "vulkan-portability"] }
 winit = "0.28"
 cfg-if = "1.0.0"
-common = { path = "./shaders/common" }
+shaders = { path = "./shaders" }
 structopt = "0.3"
 strum = { version = "0.25", default_features = false, features = ["std", "derive"] }
 bytemuck = "1.6.3"
@@ -30,7 +30,7 @@ spirv-builder = { version = "=0.9.0", features = ["watch"] }
 [workspace]
 resolver = "2"
 members = [
-    "shaders/shader",
+    "shaders",
     "pixel-vs"
 ]
 
