@@ -765,7 +765,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "grits"
+name = "gravy"
 version = "0.1.0-alpha"
 dependencies = [
  "bytemuck",
