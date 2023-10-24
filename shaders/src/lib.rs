@@ -3,7 +3,7 @@
 #![deny(warnings)]
 use spirv_std::*;
 use glam::*;
-use gravy_helpers::*;
+use gravylib_helpers::*;
 #[cfg(target_arch = "spirv")]
 use spirv_std::num_traits::Float;
 

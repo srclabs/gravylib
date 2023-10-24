@@ -757,14 +757,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "gravy"
+name = "gravylib"
 version = "0.1.0-alpha"
 dependencies = [
  "bytemuck",
  "cfg-if",
  "env_logger",
  "futures",
- "gravy_helpers",
+ "gravylib_helpers",
  "spirv-builder",
  "structopt",
  "strum",
@@ -773,7 +773,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "gravy_helpers"
+name = "gravylib_helpers"
 version = "0.0.0"
 dependencies = [
  "bytemuck",
@@ -1761,7 +1761,7 @@ dependencies = [
 name = "shaders"
 version = "0.0.0"
 dependencies = [
- "gravy_helpers",
+ "gravylib_helpers",
  "spirv-std",
 ]
 

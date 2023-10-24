@@ -20,7 +20,7 @@ pub fn execute() {
 
     // create window
     let window = winit::window::WindowBuilder::new()
-        .with_title("grits alpha (WIP)")
+        .with_title("gravylib alpha (WIP)")
         .with_inner_size(winit::dpi::LogicalSize::new(1280.0, 720.0))
         .build(&event_loop)
         .expect("Failed to create window!");

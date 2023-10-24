@@ -1,6 +1,6 @@
-// Example program using gravy to build a simple shader program
+// Example program using gravylib to build a simple shader program
 
-use gravy::*;
+use gravylib::*;
 
 fn main() {
     execute();

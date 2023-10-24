@@ -1,6 +1,6 @@
 use std::borrow::Cow;
 
-use gravy_helpers::ShaderConstants;
+use gravylib_helpers::ShaderConstants;
 use winit::{
     event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
@@ -32,7 +32,7 @@ fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) ->
         label: None,
         layout: Some(&layout),
         vertex: wgpu::VertexState {
-            module: &load_shader(device, env!("gravy_helpers.spv")),
+            module: &load_shader(device, env!("gravylib_helpers.spv")),
             entry_point: "pixel_vs",
             buffers: &[],
         },

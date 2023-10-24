@@ -1,5 +1,5 @@
 [package]
-name = "gravy"
+name = "gravylib"
 version = "0.1.0-alpha"
 edition = "2021"
 license = "MIT OR Apache-2.0"
@@ -17,7 +17,7 @@ futures = { version = "0.3", default-features = false, features = ["std", "execu
 wgpu = { version = "0.17", features = ["spirv", "vulkan-portability"] }
 winit = "0.28"
 cfg-if = "1.0.0"
-gravy_helpers = { path = "./gravy_helpers" }
+gravylib_helpers = { path = "./gravylib_helpers" }
 structopt = "0.3"
 strum = { version = "0.25", default_features = false, features = ["std", "derive"] }
 bytemuck = "1.6.3"
@@ -31,7 +31,7 @@ spirv-builder = { version = "=0.9.0", features = ["watch"] }
 resolver = "2"
 members = [
     "shaders",
-    "gravy_helpers"
+    "gravylib_helpers"
 ]
 
 # See rustc_codegen_spirv/Cargo.toml for details on these features
@@ -44,7 +44,7 @@ use-compiled-tools = ["spirv-builder/use-compiled-tools"]
 version = "0.1.0-alpha.1+1"
 edition = "2021"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/thedocruby/grits"
+repository = "https://github.com/thedocruby/gravylib"
 authors = ["Dr. Rubisco <doc@thedocruby.dev>"]
 
 [workspace.dependencies]
