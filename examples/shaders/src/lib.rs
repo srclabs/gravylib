@@ -1,4 +1,4 @@
-// ?? Can we abstract these?
+// ?? Can we abstract this file?
 #![cfg_attr(target_arch = "spirv", no_std)]
 #![deny(warnings)]
 use bytemuck::{Pod, Zeroable};
@@ -9,10 +9,7 @@ use gravylib_helpers::*;
 use spirv_std::num_traits::Float;
 
 mod common;
-
 use common::*;
-
-// ?? Can we abstract these?
 
 // ** mod rainbow
     mod rainbow;

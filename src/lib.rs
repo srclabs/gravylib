@@ -3,6 +3,7 @@
     nonstandard_style,
     rust_2018_idioms
 )]
+// TODO: Add lints (clippy?)
 
 use bytemuck::{Pod, Zeroable};
 use winit::event_loop::EventLoopBuilder;
