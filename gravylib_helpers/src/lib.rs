@@ -6,10 +6,11 @@ use glam::*;
 use bytemuck::{Pod, Zeroable};
 #[derive(Copy, Clone, Pod, Zeroable)]
 #[repr(C)]
-pub struct ShaderConstants {
+pub struct Constants {
     pub width: u32,
     pub height: u32,
     pub time: f32,
+    pub gravylib: [u32; 3]
 }
 
 #[spirv(vertex)]

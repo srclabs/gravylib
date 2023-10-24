@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 
 use bytemuck::{Pod, Zeroable};
-use gravylib_helpers::ShaderConstants;
+use gravylib_helpers::Constants;
 use winit::{
     event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
     event_loop::{ControlFlow, EventLoop},
@@ -10,8 +10,7 @@ use winit::{
 
 use crate::Shader;
 
-// TODO: Don't hardcode values
-fn build_pipeline<T: From<ShaderConstants> + Copy + Clone + Pod + Zeroable>(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration, shader: &Shader<T>) -> wgpu::RenderPipeline {
+fn build_pipeline<T: From<Constants> + Copy + Clone + Pod + Zeroable>(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration, shader: &Shader<T>) -> wgpu::RenderPipeline {
 
     let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
         label: None,
@@ -55,6 +54,7 @@ fn build_pipeline<T: From<ShaderConstants> + Copy + Clone + Pod + Zeroable>(devi
             mask: !0,
             alpha_to_coverage_enabled: false,
         },
+        // TODO: Figure out how to render to an `ImageBuffer` instead of a `Surface`
         fragment: Some(wgpu::FragmentState {
             module: &load_shader(device, &shader.path),
             entry_point: &shader.entry_point,
@@ -70,9 +70,12 @@ fn build_pipeline<T: From<ShaderConstants> + Copy + Clone + Pod + Zeroable>(devi
 
 // ** Program state
 
+// TODO: Generalize this to fit with a `RenderGraphBuilder` structure for the external interface
+// ?? How should we chunk this up?
 #[allow(dead_code)]
-struct State<T: From<ShaderConstants> + Copy + Clone + Pod + Zeroable> {
+struct State<T: From<Constants> + Copy + Clone + Pod + Zeroable> {
     instance: wgpu::Instance,
+    // TODO: Figure out how to use `ImageBuffer`s as shader inputs and outputs
     surface: wgpu::Surface,
     adapter: wgpu::Adapter,
     device: wgpu::Device,
@@ -80,12 +83,12 @@ struct State<T: From<ShaderConstants> + Copy + Clone + Pod + Zeroable> {
     config: wgpu::SurfaceConfiguration,
     size: winit::dpi::PhysicalSize<u32>,
     window: Window,
-    // TODO: Get this outta here
     shader: Shader<T>,
+    // TODO: Research `wgpu` render pipelines to determine how to generalize them
     pipeline: wgpu::RenderPipeline,
 }
 
-impl<T: From<ShaderConstants> + Copy + Clone + Pod + Zeroable> State<T> {
+impl<T: From<Constants> + Copy + Clone + Pod + Zeroable> State<T> {
     // Creating some of the wgpu types requires async code
     async fn new(window: Window, shader: Shader<T>) -> Self {
         let size = window.inner_size();
@@ -209,10 +212,11 @@ impl<T: From<ShaderConstants> + Copy + Clone + Pod + Zeroable> State<T> {
                 depth_stencil_attachment: None,
             });
 
-            let push_constants = T::from(ShaderConstants {
+            let push_constants = T::from(Constants {
                 width: self.window().inner_size().width,
                 height: self.window().inner_size().height,
                 time,
+                gravylib: [0, 1, 0],
             });
 
             pass.set_pipeline(&self.pipeline);
@@ -233,7 +237,7 @@ impl<T: From<ShaderConstants> + Copy + Clone + Pod + Zeroable> State<T> {
 
 // ** Run the main loop
 
-pub(crate) async fn run<T: From<ShaderConstants> + Copy + Clone + Pod + Zeroable>(
+pub(crate) async fn run<T: From<Constants> + Copy + Clone + Pod + Zeroable>(
     event_loop: EventLoop<()>,
     window: Window,
     shader: Shader<T>

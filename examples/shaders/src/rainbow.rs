@@ -1,4 +1,4 @@
-// Ported to Rust from <https://www.shadertoy.com/view/mtyGWy>
+// Adapted from <https://www.shadertoy.com/view/mtyGWy>
 
 // Imports
 use crate::*;
@@ -11,12 +11,12 @@ pub fn palette(t: f32) -> Vec3 {
     let c = vec3(1.0, 1.0, 1.0);
     let d = vec3(0.263,0.416,0.557);
 
-    cos(TAU * (c * t + d)).mul_add(b, a)
+    cos3(TAU * (c * t + d)).mul_add(b, a)
 }
 
 // "Entry point" (effectively)
-pub fn pixel( 
-    constants: &ShaderConstants,
+pub fn rainbow( 
+    constants: &RainbowConstants,
     frag_coord: Vec2,
 ) -> Vec4 {
     let mut uv = (frag_coord * 2.0 - vec2(constants.width as f32, constants.height as f32))

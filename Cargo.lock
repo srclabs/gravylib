@@ -765,6 +765,7 @@ dependencies = [
  "env_logger",
  "futures",
  "gravylib_helpers",
+ "shaders",
  "spirv-builder",
  "structopt",
  "strum",
@@ -1761,6 +1762,7 @@ dependencies = [
 name = "shaders"
 version = "0.0.0"
 dependencies = [
+ "bytemuck",
  "gravylib_helpers",
  "spirv-std",
 ]

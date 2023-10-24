@@ -10,7 +10,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // External shaders, should be built alongside the dependent crate
     // Currently not, since we are using `src/bin/runner.rs` as an internal testbed
-    SpirvBuilder::new("shaders", "spirv-unknown-vulkan1.1")
+    SpirvBuilder::new("examples/shaders", "spirv-unknown-vulkan1.1")
         .print_metadata(MetadataPrintout::Full)
         .build()?;
 

@@ -12,4 +12,5 @@ crate-type = ["lib", "dylib"]
 
 [dependencies]
 spirv-std = { workspace = true }
-gravylib_helpers = { path = "../gravylib_helpers" }
+gravylib_helpers = { path = "../../gravylib_helpers" }
+bytemuck = { version = "1.6.3", features = ["derive"] }

@@ -27,12 +27,18 @@ spirv-builder = { version = "=0.9.0", features = ["watch"] }
 [build-dependencies]
 spirv-builder = { version = "=0.9.0", features = ["watch"] }
 
+[dev-dependencies]
+shaders = { path = "./examples/shaders" }
+
 [workspace]
 resolver = "2"
 members = [
-    "shaders",
+    "examples/shaders",
     "gravylib_helpers"
 ]
+
+[[example]]
+name = "example"
 
 # See rustc_codegen_spirv/Cargo.toml for details on these features
 [features]
