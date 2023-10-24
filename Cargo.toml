@@ -4,7 +4,7 @@ version = "0.1.0-alpha"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 authors = ["Dr. Rubisco <doc@thedocruby.dev>"]
-description = "(WIP) Making GPU-first software development a reality, using the power of GPU Rust."
+description = "(WIP) Making GPU-first development a reality, with the power of GPU Rust."
 keywords = ["rust-gpu", "wgpu", "compute-shader", "vulkan", "toolkit", "framework"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
