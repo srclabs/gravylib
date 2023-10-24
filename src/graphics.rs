@@ -1,5 +1,6 @@
 use std::borrow::Cow;
 
+use bytemuck::{Pod, Zeroable};
 use gravylib_helpers::ShaderConstants;
 use winit::{
     event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
@@ -7,15 +8,17 @@ use winit::{
     window::Window,
 };
 
+use crate::Shader;
+
 // TODO: Don't hardcode values
-fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) -> wgpu::RenderPipeline {
+fn build_pipeline<T: From<ShaderConstants> + Copy + Clone + Pod + Zeroable>(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration, shader: &Shader<T>) -> wgpu::RenderPipeline {
 
     let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
         label: None,
         bind_group_layouts: &[],
         push_constant_ranges: &[wgpu::PushConstantRange {
             stages: wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT,
-            range: 0..std::mem::size_of::<ShaderConstants>() as u32,
+            range: 0..std::mem::size_of::<T>() as u32,
         }],
     });
 
@@ -31,6 +34,7 @@ fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) ->
     device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
         label: None,
         layout: Some(&layout),
+        // TODO: Don't hardcode `pixel_vs`, parse `shader_type` instead.
         vertex: wgpu::VertexState {
             module: &load_shader(device, env!("gravylib_helpers.spv")),
             entry_point: "pixel_vs",
@@ -52,8 +56,8 @@ fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) ->
             alpha_to_coverage_enabled: false,
         },
         fragment: Some(wgpu::FragmentState {
-            module: &load_shader(device, env!("shaders.spv")),
-            entry_point: "main_fs",
+            module: &load_shader(device, &shader.path),
+            entry_point: &shader.entry_point,
             targets: &[Some(wgpu::ColorTargetState {
                 format: config.format,
                 blend: None,
@@ -67,7 +71,7 @@ fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) ->
 // ** Program state
 
 #[allow(dead_code)]
-struct State {
+struct State<T: From<ShaderConstants> + Copy + Clone + Pod + Zeroable> {
     instance: wgpu::Instance,
     surface: wgpu::Surface,
     adapter: wgpu::Adapter,
@@ -76,12 +80,14 @@ struct State {
     config: wgpu::SurfaceConfiguration,
     size: winit::dpi::PhysicalSize<u32>,
     window: Window,
+    // TODO: Get this outta here
+    shader: Shader<T>,
     pipeline: wgpu::RenderPipeline,
 }
 
-impl State {
+impl<T: From<ShaderConstants> + Copy + Clone + Pod + Zeroable> State<T> {
     // Creating some of the wgpu types requires async code
-    async fn new(window: Window) -> Self {
+    async fn new(window: Window, shader: Shader<T>) -> Self {
         let size = window.inner_size();
 
         let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
@@ -141,7 +147,7 @@ impl State {
 
         surface.configure(&device, &config);
 
-        let pipeline = build_pipeline(&device, &config);
+        let pipeline = build_pipeline(&device, &config, &shader);
 
         Self {
             instance,
@@ -152,11 +158,12 @@ impl State {
             queue,
             config,
             size,
-            pipeline,
+            shader,
+            pipeline
         }
     }
 
-    pub fn window(&self) -> &Window {
+    fn window(&self) -> &Window {
         &self.window
     }
 
@@ -202,11 +209,11 @@ impl State {
                 depth_stencil_attachment: None,
             });
 
-            let push_constants = ShaderConstants {
+            let push_constants = T::from(ShaderConstants {
                 width: self.window().inner_size().width,
                 height: self.window().inner_size().height,
                 time,
-            };
+            });
 
             pass.set_pipeline(&self.pipeline);
             pass.set_push_constants(
@@ -226,13 +233,14 @@ impl State {
 
 // ** Run the main loop
 
-pub(crate) async fn run(
+pub(crate) async fn run<T: From<ShaderConstants> + Copy + Clone + Pod + Zeroable>(
     event_loop: EventLoop<()>,
     window: Window,
+    shader: Shader<T>
 ) {
     // ** Create the state
 
-    let mut state = State::new(window).await;
+    let mut state = State::new(window, shader).await;
 
     // ** Start main loop
 
