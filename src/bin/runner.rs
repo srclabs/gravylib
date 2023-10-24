@@ -1,4 +1,4 @@
-// * Example program using grits to build a simple shader program
+// * Example program using gravy to build a simple shader program
 
 use gravy::*;
 

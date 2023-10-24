@@ -123,7 +123,7 @@ impl State {
             .find(|f| f.is_srgb())            
             .unwrap_or(surface_caps.formats[0]);
 
-        let config = wgpu::SurfaceConfiguration {
+        let mut config = wgpu::SurfaceConfiguration {
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
             format: surface_format,
             width: size.width,
@@ -132,6 +132,12 @@ impl State {
             alpha_mode: surface_caps.alpha_modes[0],
             view_formats: vec![],
         };
+
+        // FIXME(eddyb) should this be toggled by a CLI arg?
+        // NOTE(eddyb) VSync was disabled in the past, but without VSync,
+        // especially for simpler shaders, you can easily hit thousands
+        // of frames per second, stressing GPUs for no reason.
+        config.present_mode = wgpu::PresentMode::AutoVsync;
 
         surface.configure(&device, &config);
 
