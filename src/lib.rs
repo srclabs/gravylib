@@ -22,6 +22,7 @@ pub enum ShaderType {
     //// Task,
 }
 
+// TODO: Try to move Shader objects into `shaders/src/lib.rs`
 pub struct Shader<T: From<Constants> + Copy + Clone + Pod + Zeroable> {
     #[allow(dead_code)]
     shader_type: ShaderType,
