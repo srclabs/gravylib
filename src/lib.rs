@@ -3,20 +3,19 @@
     nonstandard_style,
     rust_2018_idioms
 )]
-// crate-specific exceptions:
-// #![allow()]
 
 use winit::event_loop::EventLoopBuilder;
-use crate::graphics::run;
 
 mod graphics;
 
-// * Execute the main loop
+use graphics::run;
 
+// TODO: implement a `Shader` struct that can be used to represent a shader
+
+// TODO: Use a `RenderGraphBuilder` for the external interface
 pub fn execute() {
-    // create event loop with hot reloading (via user events)
+    // create event loop
     let mut event_loop_builder = EventLoopBuilder::with_user_event();
-    env_logger::init();
     let event_loop = event_loop_builder.build();
 
     // create window
@@ -24,7 +23,7 @@ pub fn execute() {
         .with_title("grits alpha (WIP)")
         .with_inner_size(winit::dpi::LogicalSize::new(1280.0, 720.0))
         .build(&event_loop)
-        .unwrap();
+        .expect("Failed to create window!");
 
     // run the main loop
     futures::executor::block_on(run(

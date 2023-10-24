@@ -7,6 +7,7 @@ use winit::{
     window::Window,
 };
 
+// TODO: Don't hardcode values
 fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) -> wgpu::RenderPipeline {
 
     let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -19,7 +20,7 @@ fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) ->
     });
 
     fn load_shader(device: &wgpu::Device, path: &str) -> wgpu::ShaderModule {
-        let spirv = &std::fs::read(path).unwrap();
+        let spirv = &std::fs::read(path).expect(format!("Failed to read shader at {}!", path).as_str());
         let spirv = Cow::Owned(wgpu::util::make_spirv_raw(spirv).into_owned());
         device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
@@ -90,7 +91,7 @@ impl State {
         });
         
         let surface = unsafe { instance.create_surface(&window) }
-            .expect("Failed to create surface from window");
+            .expect("Failed to create surface from window!");
 
         let adapter = instance.request_adapter(
             &wgpu::RequestAdapterOptions {
@@ -99,7 +100,7 @@ impl State {
                 force_fallback_adapter: false,
             },
         ).await
-        .expect("Failed to find an appropriate adapter");
+        .expect("Failed to find an appropriate adapter!");
     
         let (device, queue) = adapter
             .request_device(
@@ -114,7 +115,7 @@ impl State {
                 None,
             )
             .await
-            .expect("Failed to create device");
+            .expect("Failed to create device!");
 
         let surface_caps = surface.get_capabilities(&adapter);
 
@@ -133,7 +134,6 @@ impl State {
             view_formats: vec![],
         };
 
-        // FIXME(eddyb) should this be toggled by a CLI arg?
         // NOTE(eddyb) VSync was disabled in the past, but without VSync,
         // especially for simpler shaders, you can easily hit thousands
         // of frames per second, stressing GPUs for no reason.
@@ -182,7 +182,8 @@ impl State {
 
         let mut encoder = self.device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
-        {
+
+        { // ? Why is this scoped?
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: None,
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -241,7 +242,7 @@ pub(crate) async fn run(
         // Have the closure take ownership of the resources.
         // `event_loop.run` never returns, therefore we must do this to ensure
         // the resources are properly cleaned up.
-        // ? Is this needed?
+        // ? Is this still needed?
         let _ = &state;
 
         // * Handle events
