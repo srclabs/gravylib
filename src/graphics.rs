@@ -64,7 +64,7 @@ fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration) ->
     })
 }
 
-// * Program state
+// ** Program state
 
 #[allow(dead_code)]
 struct State {
@@ -183,7 +183,7 @@ impl State {
         let mut encoder = self.device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor { label: None });
 
-        { // ? Why is this scoped?
+        { // ?? Why is this scoped?
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: None,
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -224,17 +224,17 @@ impl State {
     }
 }
 
-// * Run the main loop
+// ** Run the main loop
 
 pub(crate) async fn run(
     event_loop: EventLoop<()>,
     window: Window,
 ) {
-    // * Create the state
+    // ** Create the state
 
     let mut state = State::new(window).await;
 
-    // * Start main loop
+    // ** Start main loop
 
     let start = std::time::Instant::now();
 
@@ -242,22 +242,22 @@ pub(crate) async fn run(
         // Have the closure take ownership of the resources.
         // `event_loop.run` never returns, therefore we must do this to ensure
         // the resources are properly cleaned up.
-        // ? Is this still needed?
+        // ?? Is this still needed?
         let _ = &state;
 
-        // * Handle events
+        // ** Handle events
         match event {
             Event::MainEventsCleared =>
                 state.window().request_redraw(),
 
-            // * Handle window events
+            // ** Handle window events
             Event::WindowEvent {
                 ref event,
                 window_id,
             } if window_id == state.window().id() => if !state.input(event) {
                 match event {
 
-                    // * Close window
+                    // ** Close window
                     WindowEvent::CloseRequested
                     | WindowEvent::KeyboardInput {
                         input:
@@ -269,7 +269,7 @@ pub(crate) async fn run(
                         ..
                     } => *control_flow = ControlFlow::Exit,
 
-                    // * Toggle fullscreen
+                    // ** Toggle fullscreen
                     WindowEvent::KeyboardInput {
                         input:
                             KeyboardInput {
@@ -286,7 +286,7 @@ pub(crate) async fn run(
                         }
                     },
 
-                    // * Resize window
+                    // ** Resize window
                     WindowEvent::Resized(physical_size) => {
                         state.resize(*physical_size);
                     }
@@ -294,12 +294,12 @@ pub(crate) async fn run(
                         state.resize(**new_inner_size);
                     }
 
-                    // * Ignore other window events
+                    // ** Ignore other window events
                     _ => {}
                 }
             },
 
-            // * Redraw window
+            // ** Redraw window
             Event::RedrawRequested(_) => 
                 match state.render(
                     start.elapsed().as_secs_f32()
@@ -320,7 +320,7 @@ pub(crate) async fn run(
                     }
                 },
             
-            // * Ignore other events
+            // ** Ignore other events
             _ => {}
         }
     });

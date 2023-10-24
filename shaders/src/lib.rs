@@ -1,4 +1,4 @@
-// ? Can we abstract these?
+// ?? Can we abstract these?
 #![cfg_attr(target_arch = "spirv", no_std)]
 #![deny(warnings)]
 use spirv_std::*;
@@ -13,7 +13,7 @@ mod pixel;
 use common::*;
 use pixel::pixel;
 
-// ? Can we abstract these?
+// ?? Can we abstract these?
 #[spirv(fragment)]
 pub fn main_fs(
     #[spirv(frag_coord)] in_frag_coord: Vec4,
