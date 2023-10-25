@@ -11,7 +11,7 @@ use spirv_std::num_traits::Float;
 mod common;
 use common::*;
 
-// ** mod rainbow
+// ** RAINBOW
     mod rainbow;
 
     #[derive(Copy, Clone, Pod, Zeroable)]
@@ -31,6 +31,7 @@ use common::*;
             }
         }
     }
+
     #[spirv(fragment)]
     pub fn rainbow(
         #[spirv(frag_coord)] in_frag_coord: Vec4,
@@ -40,9 +41,18 @@ use common::*;
         let frag_coord = vec2(in_frag_coord.x, in_frag_coord.y);
         *output = rainbow::rainbow(constants, frag_coord);
     }
-// ** mod rainbow
 
-// ** mod circle
+    #[cfg(not(target_arch = "spirv"))]
+    #[allow(dead_code)]
+    pub const RAINBOW: &RawShader<RainbowConstants> = &RawShader {
+        shader_type: ShaderType::Pixel,
+        crate_name: env!("CARGO_CRATE_NAME"),
+        entry_point: "rainbow",
+        phantom: std::marker::PhantomData,
+    };
+// ** RAINBOW
+
+// ** CIRCLE
     mod circle;
 
     #[derive(Copy, Clone, Pod, Zeroable)]
@@ -73,5 +83,12 @@ use common::*;
         *output = circle::circle(constants, frag_coord);
     }
 
-
-// ** mod circle
+    #[cfg(not(target_arch = "spirv"))]
+    #[allow(dead_code)]
+    pub const CIRCLE: &RawShader<CircleConstants> = &RawShader {
+        shader_type: ShaderType::Pixel,
+        crate_name: env!("CARGO_CRATE_NAME"),
+        entry_point: "circle",
+        phantom: std::marker::PhantomData,
+    };
+// ** CIRCLE

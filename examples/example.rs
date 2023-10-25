@@ -1,19 +1,19 @@
 // Example program using gravylib to build a simple shader program
-
+// Import gravylib
 use gravylib::*;
-#[allow(unused_imports)]
-use shaders::{ RainbowConstants, CircleConstants };
+// Import shaders from the custom shader crate (with gravy-styled lib.rs)
+use shaders::{ CIRCLE, RAINBOW };
 
 fn main() {
-    // Tip: Try changing the shader!
-    // "circle" uses CircleConstants and points to the shader in `shaders/src/circle.rs`
-    // "rainbow" uses RainbowConstants and points to the shader in `shaders/src/rainbow.rs`
-    let shader = 
-    
-    Shader::<CircleConstants /*RainbowConstants*/>::new(
-        ShaderType::Pixel,
-        env!("shaders.spv"),
-        "circle" //"rainbow"
+
+    // Build shader from raw shader
+    let shader = Shader::from(
+        // Tip: Try changing the shader!
+        // `CIRCLE` points to the shader in `shaders/src/circle.rs`
+        // `RAINBOW` points to the shader in `shaders/src/rainbow.rs`
+        CIRCLE
     );
-    execute(shader);
+
+    // Execute shader
+    shader.execute();
 }

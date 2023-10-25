@@ -13,6 +13,25 @@ pub struct Constants {
     pub gravylib: [u32; 3]
 }
 
+#[cfg(not(target_arch = "spirv"))]
+#[derive(Debug, Copy, Clone)]
+pub enum ShaderType {
+    Pixel,
+    // One day...
+    //// Compute,
+    //// Audio,
+    //// Mesh,
+    //// Task,
+}
+
+#[cfg(not(target_arch = "spirv"))]
+pub struct RawShader<T: From<Constants> + Copy + Clone + Pod + Zeroable> {
+    pub shader_type: ShaderType,
+    pub crate_name: &'static str,
+    pub entry_point: &'static str,
+    pub phantom: std::marker::PhantomData<T>,
+}
+
 #[spirv(vertex)]
 pub fn pixel_vs(#[spirv(vertex_index)] vert_idx: i32, #[spirv(position)] builtin_pos: &mut Vec4) {
     // Create a "full screen triangle" by mapping the vertex index.
