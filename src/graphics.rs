@@ -130,7 +130,8 @@ impl<T: From<Constants> + Copy + Clone + Pod + Zeroable> State<T> {
 
         let surface_format = surface_caps.formats.iter()
             .copied()
-            .find(|f| f.is_srgb())            
+            // HACK (thedocruby) This should be using sRGB, but it's not working properly for some reason
+            .find(|f| !f.is_srgb())            
             .unwrap_or(surface_caps.formats[0]);
 
         let mut config = wgpu::SurfaceConfiguration {

@@ -1,10 +1,12 @@
 // Adapted from <https://www.shadertoy.com/view/mtyGWy>
 
-// Imports
+// ** Imports
+
 use crate::*;
 use core::f32::consts::TAU;
 
-// Helpers
+// ** Helpers
+
 pub fn palette(t: f32) -> Vec3 {
     let a = vec3(0.5, 0.5, 0.5);
     let b = vec3(0.5, 0.5, 0.5);
@@ -14,7 +16,8 @@ pub fn palette(t: f32) -> Vec3 {
     cos3(TAU * (c * t + d)).mul_add(b, a)
 }
 
-// "Entry point" (effectively)
+// ** "Entry point" (effectively)
+
 pub fn rainbow( 
     constants: &RainbowConstants,
     frag_coord: Vec2,
@@ -23,7 +26,7 @@ pub fn rainbow(
         / constants.height as f32;
 
     let uv0 = uv;
-    let mut final_color = Vec3::splat(0.0);
+    let mut final_color = Vec3::ZERO;
     
     for i in 0..4 {
         uv = (uv * 1.5).fract() - 0.5;
@@ -31,7 +34,7 @@ pub fn rainbow(
         let mut d = uv.length() * (-1.0 * uv0.length()).exp();
         d = (d * 8.0 + constants.time).sin() / 8.0;
         d = d.abs();
-        d = (0.01 / d).powf(2.0);
+        d = (0.01 / d).powf(1.2);
 
         let col = palette(
             uv0.length() +

@@ -1,15 +1,18 @@
 // Ported to Rust from <https://www.shadertoy.com/view/3ltSW2>
 
-// Imports
+// ** Imports
+
 use crate::*;
 use core::f32::consts::PI;
 
-// Helpers
+// ** Helpers
+
 fn circle_sdf(p: Vec2, r: f32) -> f32 {
     p.length()-r
 }
 
-// "Entry point" (effectively)
+// ** "Entry point" (effectively)
+
 pub fn circle( constants: &CircleConstants, frag_coord: Vec2) -> Vec4 {
 	let p: Vec2 = (2.0 * frag_coord
         - vec2(constants.width as f32,
@@ -29,7 +32,7 @@ pub fn circle( constants: &CircleConstants, frag_coord: Vec2) -> Vec4 {
 	col *= 0.8 + 0.2*(150.0*(d.abs() + (constants.time * PI).cos() * 0.1)).cos();
 	col = mix3(
         col,
-        Vec3::splat(1.0),
+        Vec3::ONE,
         1.0-smoothstep(0.0,0.01,d.abs())
     );
 

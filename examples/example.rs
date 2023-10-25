@@ -2,16 +2,16 @@
 // Import gravylib
 use gravylib::*;
 // Import shaders from the custom shader crate (with gravy-styled lib.rs)
-use shaders::{ CIRCLE, RAINBOW };
+#[allow(unused_imports)]
+use shaders::{ CIRCLE, RAINBOW, OCEAN };
 
 fn main() {
 
     // Build shader from raw shader
     let shader = Shader::from(
         // Tip: Try changing the shader!
-        // `CIRCLE` points to the shader in `shaders/src/circle.rs`
-        // `RAINBOW` points to the shader in `shaders/src/rainbow.rs`
-        CIRCLE
+        // Options: CIRCLE, RAINBOW, OCEAN
+        OCEAN
     );
 
     // Execute shader

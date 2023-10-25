@@ -58,5 +58,3 @@ spirv-std = { version = "=0.9.0" }
 spirv-std-types = { version = "=0.9.0" }
 spirv-std-macros = { version = "=0.9.0" }
 spirv-builder = { version = "=0.9.0", default-features = false  }
-rustc_codegen_spirv = { version = "=0.9.0", default-features = false }
-rustc_codegen_spirv-types = { version = "=0.9.0" }

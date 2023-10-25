@@ -92,3 +92,45 @@ use common::*;
         phantom: std::marker::PhantomData,
     };
 // ** CIRCLE
+
+// ** OCEAN
+    mod ocean;
+    
+    #[derive(Copy, Clone, Pod, Zeroable)]
+    #[repr(C)]
+    pub struct OceanConstants {
+        pub width: u32,
+        pub height: u32,
+        pub time: f32,
+    }
+
+    impl From<Constants> for OceanConstants {
+        fn from(constants: Constants) -> Self {
+            Self {
+                width: constants.width,
+                height: constants.height,
+                time: constants.time,
+            }
+        }
+    }
+
+    #[spirv(fragment)]
+    pub fn ocean(
+        #[spirv(frag_coord)] in_frag_coord: Vec4,
+        #[spirv(push_constant)] constants: &OceanConstants,
+        output: &mut Vec4,
+    ) {
+        let frag_coord = vec2(in_frag_coord.x, in_frag_coord.y);
+        *output = ocean::ocean(constants, frag_coord);
+    }
+
+    #[cfg(not(target_arch = "spirv"))]
+    #[allow(dead_code)]
+    pub const OCEAN: &RawShader<OceanConstants> = &RawShader {
+        shader_type: ShaderType::Pixel,
+        crate_name: env!("CARGO_CRATE_NAME"),
+        entry_point: "ocean",
+        phantom: std::marker::PhantomData,
+    };
+
+// ** OCEAN

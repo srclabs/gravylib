@@ -39,3 +39,7 @@ pub fn cos3(v: Vec3) -> Vec3 {
 pub fn sin3(v: Vec3) -> Vec3 {
     vec3(v.x.sin(), v.y.sin(), v.z.sin())
 }
+
+pub fn reflect(ray: Vec3, normal: Vec3) -> Vec3 {
+    ray - normal * 2.0 * ray.dot(normal)
+}
