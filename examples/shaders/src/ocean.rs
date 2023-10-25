@@ -165,7 +165,7 @@ fn aces_tonemap(color: Vec3) -> Vec3 {
   let v = m1 * color;  
   let a = v * (v + 0.0245786) - 0.000090537;
   let b = v * (0.983729 * v + 0.4329510) + 0.238081;
-  (m2 * (a / b)).clamp(Vec3::ZERO, Vec3::ONE).powf(1.0 / 2.2)
+  (m2 * (a / b)).clamp(Vec3::ZERO, Vec3::ONE)//.powf(1.0 / 2.2)
 }
 
 // ** "Entry point" (effectively)

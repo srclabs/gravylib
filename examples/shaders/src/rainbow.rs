@@ -45,5 +45,5 @@ pub fn rainbow(
         final_color += col * d;
     }
         
-    final_color.extend(1.0)
+    to_linear(final_color.extend(1.0))
 }

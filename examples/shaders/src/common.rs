@@ -43,3 +43,21 @@ pub fn sin3(v: Vec3) -> Vec3 {
 pub fn reflect(ray: Vec3, normal: Vec3) -> Vec3 {
     ray - normal * 2.0 * ray.dot(normal)
 }
+
+// NOTE: This function is for converting particularly stubborn Shadertoy shaders to the proper linear color space.
+pub fn to_linear(color: Vec4) -> Vec4 {
+    vec4(
+        to_linear_f32(color.x),
+        to_linear_f32(color.y),
+        to_linear_f32(color.z),
+        color.w,
+    )
+}
+
+fn to_linear_f32(color: f32) -> f32 {
+    if color <= 0.04045 {
+        color / 12.92
+    } else {
+        ((color + 0.055) / 1.055).powf(2.4)
+    }
+}

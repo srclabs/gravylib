@@ -36,5 +36,5 @@ pub fn circle( constants: &CircleConstants, frag_coord: Vec2) -> Vec4 {
         1.0-smoothstep(0.0,0.01,d.abs())
     );
 
-	col.extend(1.0)
+	to_linear(col.extend(1.0))
 }
