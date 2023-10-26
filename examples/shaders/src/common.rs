@@ -44,7 +44,29 @@ pub fn reflect(ray: Vec3, normal: Vec3) -> Vec3 {
     ray - normal * 2.0 * ray.dot(normal)
 }
 
-// NOTE: This function is for converting particularly stubborn Shadertoy shaders to the proper linear color space.
+fn to_linear_f32(color: f32) -> f32 {
+    if color <= 0.04045 {
+        color / 12.92
+    } else {
+        ((color + 0.055) / 1.055).powf(2.4)
+    }
+}
+
+/// NOTE: This function is for converting particularly stubborn Shadertoy shaders to the proper linear color space.
+/// 
+/// If you are porting a a GLSL shader from Shadertoy to Gravy, and the colors look wrong,
+/// first try to find any part of the code that is doing something like this:
+///   `pow(color, vec3(1.0/2.2));`
+/// Or, alternatively:
+///   `pow(color, vec3(.4545));`
+/// 
+/// If you find any similar bits of code,
+/// you can simply replace the entire thing with `color`. This will fix the colors.
+/// 
+/// If you do not find any bits like that, then to fix the colors,
+/// pass the final color through this function before returning it.
+/// 
+/// (example in `rainbow.rs`)
 pub fn to_linear(color: Vec4) -> Vec4 {
     vec4(
         to_linear_f32(color.x),
@@ -52,12 +74,4 @@ pub fn to_linear(color: Vec4) -> Vec4 {
         to_linear_f32(color.z),
         color.w,
     )
-}
-
-fn to_linear_f32(color: f32) -> f32 {
-    if color <= 0.04045 {
-        color / 12.92
-    } else {
-        ((color + 0.055) / 1.055).powf(2.4)
-    }
 }

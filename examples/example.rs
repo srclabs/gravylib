@@ -11,7 +11,7 @@ fn main() {
     let shader = Shader::from(
         // Tip: Try changing the shader!
         // Options: CIRCLE, RAINBOW, OCEAN
-        CIRCLE
+        OCEAN
     );
 
     // Execute shader
