@@ -55,3 +55,20 @@ impl<T: From<Constants> + Copy + Clone + Pod + Zeroable> From<&RawShader<T>> for
 }
 
 // TODO: Use a `RenderGraphBuilder` for the external interface
+
+
+// Prepare for initial alpha release: (SUBJECT TO CHANGE)
+// todo: eliminate custom constants system. use gravylib_helpers::Constants instead
+// todo: re-implement hot reloading
+// todo: upgrade winit
+// todo: upgrade wgpu
+// todo: explore traits, annotations, macros, etc. to reduce boilerplate
+// todo: explore using lib in place of common
+// todo: more examples
+// todo: make a custom example to showcase rust features in shaders
+// todo: implement helpers as a module expansion of gravylib main crate
+// todo: consider adding an example shader crate with some helper SDF primitives.
+// todo: cleanup, refactoring, documentation
+// todo: Shiny new README with images
+// todo: Branding? Logo? Website? Promotion?
+// todo: Release on crates.io
