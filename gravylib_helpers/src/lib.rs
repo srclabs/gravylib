@@ -25,11 +25,10 @@ pub enum ShaderType {
 }
 
 #[cfg(not(target_arch = "spirv"))]
-pub struct RawShader<T: From<Constants> + Copy + Clone + Pod + Zeroable> {
+pub struct RawShader {
     pub shader_type: ShaderType,
     pub crate_name: &'static str,
     pub entry_point: &'static str,
-    pub phantom: std::marker::PhantomData<T>,
 }
 
 #[spirv(vertex)]

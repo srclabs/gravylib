@@ -5,23 +5,21 @@
 )]
 // TODO: Add lints (clippy?)
 
-use bytemuck::{Pod, Zeroable};
 use winit::event_loop::EventLoopBuilder;
 
 mod graphics;
 
 use graphics::run;
-use gravylib_helpers::{Constants, ShaderType, RawShader};
+use gravylib_helpers::{ ShaderType, RawShader };
 
-pub struct Shader<T: From<Constants> + Copy + Clone + Pod + Zeroable> {
+pub struct Shader {
     #[allow(dead_code)]
     shader_type: ShaderType,
     path: String,
     entry_point: String,
-    phantom: std::marker::PhantomData<T>,
 }
 
-impl<T: From<Constants> + Copy + Clone + Pod + Zeroable> Shader<T>{
+impl Shader{
     pub fn execute(self) {
         // create event loop
         let mut event_loop_builder = EventLoopBuilder::with_user_event();
@@ -43,13 +41,12 @@ impl<T: From<Constants> + Copy + Clone + Pod + Zeroable> Shader<T>{
     }
 }
 
-impl<T: From<Constants> + Copy + Clone + Pod + Zeroable> From<&RawShader<T>> for Shader<T> {
-    fn from(raw: &RawShader<T>) -> Self {
+impl From<&RawShader> for Shader {
+    fn from(raw: &RawShader) -> Self {
         Self {
             shader_type: raw.shader_type,
             path: std::env::var(raw.crate_name.to_owned() + ".spv").expect("Invalid shader configuration!"),
             entry_point: raw.entry_point.to_owned(),
-            phantom: raw.phantom,
         }
     }
 }
@@ -58,7 +55,8 @@ impl<T: From<Constants> + Copy + Clone + Pod + Zeroable> From<&RawShader<T>> for
 
 
 // Prepare for initial alpha release: (SUBJECT TO CHANGE)
-// todo: eliminate custom constants system. use gravylib_helpers::Constants instead
+// done: eliminate custom constants system. use gravylib_helpers::Constants instead
+
 // todo: re-implement hot reloading
 // todo: upgrade winit
 // todo: upgrade wgpu

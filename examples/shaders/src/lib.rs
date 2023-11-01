@@ -25,11 +25,10 @@ use common::*;
 
     #[cfg(not(target_arch = "spirv"))]
     #[allow(dead_code)]
-    pub const RAINBOW: &RawShader<Constants> = &RawShader {
+    pub const RAINBOW: &RawShader = &RawShader {
         shader_type: ShaderType::Pixel,
         crate_name: env!("CARGO_CRATE_NAME"),
         entry_point: "rainbow",
-        phantom: std::marker::PhantomData,
     };
 // ** RAINBOW
 
@@ -48,11 +47,10 @@ use common::*;
 
     #[cfg(not(target_arch = "spirv"))]
     #[allow(dead_code)]
-    pub const CIRCLE: &RawShader<Constants> = &RawShader {
+    pub const CIRCLE: &RawShader = &RawShader {
         shader_type: ShaderType::Pixel,
         crate_name: env!("CARGO_CRATE_NAME"),
         entry_point: "circle",
-        phantom: std::marker::PhantomData,
     };
 // ** CIRCLE
 
@@ -71,11 +69,10 @@ use common::*;
 
     #[cfg(not(target_arch = "spirv"))]
     #[allow(dead_code)]
-    pub const OCEAN: &RawShader<Constants> = &RawShader {
+    pub const OCEAN: &RawShader = &RawShader {
         shader_type: ShaderType::Pixel,
         crate_name: env!("CARGO_CRATE_NAME"),
         entry_point: "ocean",
-        phantom: std::marker::PhantomData,
     };
 
 // ** OCEAN
@@ -102,9 +99,8 @@ use common::*;
        // This is the RawShader struct. It must be named the same as the shader file, in CONSTANT_CASE
 //     #[cfg(not(target_arch = "spirv"))]
 //     #[allow(dead_code)]
-//     pub const TEST: &RawShader<Constants> = &RawShader { // Replace "TEST" with the name of the shader in CONSTANT_CASE
+//     pub const TEST: &RawShader = &RawShader { // Replace "TEST" with the name of the shader in CONSTANT_CASE
 //         shader_type: ShaderType::Pixel,
 //         crate_name: env!("CARGO_CRATE_NAME"),
 //         entry_point: "test", // Replace "test" with the name of the shader in snake_case
-//         phantom: std::marker::PhantomData,
 //     };

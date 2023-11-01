@@ -1,6 +1,5 @@
 use std::borrow::Cow;
 
-use bytemuck::{Pod, Zeroable};
 use gravylib_helpers::Constants;
 use winit::{
     event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
@@ -10,14 +9,14 @@ use winit::{
 
 use crate::Shader;
 
-fn build_pipeline<T: From<Constants> + Copy + Clone + Pod + Zeroable>(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration, shader: &Shader<T>) -> wgpu::RenderPipeline {
+fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration, shader: &Shader) -> wgpu::RenderPipeline {
 
     let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
         label: None,
         bind_group_layouts: &[],
         push_constant_ranges: &[wgpu::PushConstantRange {
             stages: wgpu::ShaderStages::VERTEX | wgpu::ShaderStages::FRAGMENT,
-            range: 0..std::mem::size_of::<T>() as u32,
+            range: 0..std::mem::size_of::<Constants>() as u32,
         }],
     });
 
@@ -73,7 +72,7 @@ fn build_pipeline<T: From<Constants> + Copy + Clone + Pod + Zeroable>(device: &w
 // TODO: Generalize this to fit with a `RenderGraphBuilder` structure for the external interface
 // ?? How should we chunk this up?
 #[allow(dead_code)]
-struct State<T: From<Constants> + Copy + Clone + Pod + Zeroable> {
+struct State {
     instance: wgpu::Instance,
     // TODO: Figure out how to use `ImageBuffer`s as shader inputs and outputs
     surface: wgpu::Surface,
@@ -83,14 +82,14 @@ struct State<T: From<Constants> + Copy + Clone + Pod + Zeroable> {
     config: wgpu::SurfaceConfiguration,
     size: winit::dpi::PhysicalSize<u32>,
     window: Window,
-    shader: Shader<T>,
+    shader: Shader,
     // TODO: Research `wgpu` render pipelines to determine how to generalize them
     pipeline: wgpu::RenderPipeline,
 }
 
-impl<T: From<Constants> + Copy + Clone + Pod + Zeroable> State<T> {
+impl State {
     // Creating some of the wgpu types requires async code
-    async fn new(window: Window, shader: Shader<T>) -> Self {
+    async fn new(window: Window, shader: Shader) -> Self {
         let size = window.inner_size();
 
         let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
@@ -212,12 +211,12 @@ impl<T: From<Constants> + Copy + Clone + Pod + Zeroable> State<T> {
                 depth_stencil_attachment: None,
             });
 
-            let push_constants = T::from(Constants {
+            let push_constants = Constants {
                 width: self.window().inner_size().width,
                 height: self.window().inner_size().height,
                 time,
                 gravylib: [0, 1, 0],
-            });
+            };
 
             pass.set_pipeline(&self.pipeline);
             pass.set_push_constants(
@@ -237,10 +236,10 @@ impl<T: From<Constants> + Copy + Clone + Pod + Zeroable> State<T> {
 
 // ** Run the main loop
 
-pub(crate) async fn run<T: From<Constants> + Copy + Clone + Pod + Zeroable>(
+pub(crate) async fn run(
     event_loop: EventLoop<()>,
     window: Window,
-    shader: Shader<T>
+    shader: Shader
 ) {
     // ** Create the state
 
