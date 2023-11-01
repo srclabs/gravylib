@@ -1762,7 +1762,6 @@ dependencies = [
 name = "shaders"
 version = "0.0.0"
 dependencies = [
- "bytemuck",
  "gravylib_helpers",
  "spirv-std",
 ]

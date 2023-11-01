@@ -171,7 +171,7 @@ fn aces_tonemap(color: Vec3) -> Vec3 {
 // ** "Entry point" (effectively)
 
 // Main
-pub fn ocean(constants: &OceanConstants, frag_coord: Vec2) -> Vec4 {
+pub fn ocean(constants: &Constants, frag_coord: Vec2) -> Vec4 {
   // get the ray
   let resf = vec2(constants.width as f32, constants.height as f32);
   // let mousef = vec2(constants.mousex as f32, constants.mousey as f32);

@@ -19,7 +19,7 @@ pub fn palette(t: f32) -> Vec3 {
 // ** "Entry point" (effectively)
 
 pub fn rainbow( 
-    constants: &RainbowConstants,
+    constants: &Constants,
     frag_coord: Vec2,
 ) -> Vec4 {
     let mut uv = (frag_coord * 2.0 - vec2(constants.width as f32, constants.height as f32))

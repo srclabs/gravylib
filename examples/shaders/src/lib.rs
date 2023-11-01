@@ -1,7 +1,6 @@
 // ?? Can we abstract this file?
 #![cfg_attr(target_arch = "spirv", no_std)]
 #![deny(warnings)]
-use bytemuck::{Pod, Zeroable};
 use spirv_std::*;
 use glam::*;
 use gravylib_helpers::*;
@@ -14,28 +13,10 @@ use common::*;
 // ** RAINBOW
     mod rainbow;
 
-    #[derive(Copy, Clone, Pod, Zeroable)]
-    #[repr(C)]
-    pub struct RainbowConstants {
-        pub width: u32,
-        pub height: u32,
-        pub time: f32,
-    }
-
-    impl From<Constants> for RainbowConstants {
-        fn from(constants: Constants) -> Self {
-            Self {
-                width: constants.width,
-                height: constants.height,
-                time: constants.time,
-            }
-        }
-    }
-
     #[spirv(fragment)]
     pub fn rainbow(
         #[spirv(frag_coord)] in_frag_coord: Vec4,
-        #[spirv(push_constant)] constants: &RainbowConstants,
+        #[spirv(push_constant)] constants: &Constants,
         output: &mut Vec4,
     ) {
         let frag_coord = vec2(in_frag_coord.x, in_frag_coord.y);
@@ -44,7 +25,7 @@ use common::*;
 
     #[cfg(not(target_arch = "spirv"))]
     #[allow(dead_code)]
-    pub const RAINBOW: &RawShader<RainbowConstants> = &RawShader {
+    pub const RAINBOW: &RawShader<Constants> = &RawShader {
         shader_type: ShaderType::Pixel,
         crate_name: env!("CARGO_CRATE_NAME"),
         entry_point: "rainbow",
@@ -55,28 +36,10 @@ use common::*;
 // ** CIRCLE
     mod circle;
 
-    #[derive(Copy, Clone, Pod, Zeroable)]
-    #[repr(C)]
-    pub struct CircleConstants {
-        pub width: u32,
-        pub height: u32,
-        pub time: f32,
-    }
-
-    impl From<Constants> for CircleConstants {
-        fn from(constants: Constants) -> Self {
-            Self {
-                width: constants.width,
-                height: constants.height,
-                time: constants.time,
-            }
-        }
-    }
-
     #[spirv(fragment)]
     pub fn circle(
         #[spirv(frag_coord)] in_frag_coord: Vec4,
-        #[spirv(push_constant)] constants: &CircleConstants,
+        #[spirv(push_constant)] constants: &Constants,
         output: &mut Vec4,
     ) {
         let frag_coord = vec2(in_frag_coord.x, in_frag_coord.y);
@@ -85,7 +48,7 @@ use common::*;
 
     #[cfg(not(target_arch = "spirv"))]
     #[allow(dead_code)]
-    pub const CIRCLE: &RawShader<CircleConstants> = &RawShader {
+    pub const CIRCLE: &RawShader<Constants> = &RawShader {
         shader_type: ShaderType::Pixel,
         crate_name: env!("CARGO_CRATE_NAME"),
         entry_point: "circle",
@@ -95,29 +58,11 @@ use common::*;
 
 // ** OCEAN
     mod ocean;
-    
-    #[derive(Copy, Clone, Pod, Zeroable)]
-    #[repr(C)]
-    pub struct OceanConstants {
-        pub width: u32,
-        pub height: u32,
-        pub time: f32,
-    }
-
-    impl From<Constants> for OceanConstants {
-        fn from(constants: Constants) -> Self {
-            Self {
-                width: constants.width,
-                height: constants.height,
-                time: constants.time,
-            }
-        }
-    }
 
     #[spirv(fragment)]
     pub fn ocean(
         #[spirv(frag_coord)] in_frag_coord: Vec4,
-        #[spirv(push_constant)] constants: &OceanConstants,
+        #[spirv(push_constant)] constants: &Constants,
         output: &mut Vec4,
     ) {
         let frag_coord = vec2(in_frag_coord.x, in_frag_coord.y);
@@ -126,7 +71,7 @@ use common::*;
 
     #[cfg(not(target_arch = "spirv"))]
     #[allow(dead_code)]
-    pub const OCEAN: &RawShader<OceanConstants> = &RawShader {
+    pub const OCEAN: &RawShader<Constants> = &RawShader {
         shader_type: ShaderType::Pixel,
         crate_name: env!("CARGO_CRATE_NAME"),
         entry_point: "ocean",
@@ -140,30 +85,11 @@ use common::*;
 //
 //     mod test; // <--- This is the name of the shader in snake_case
 //
-       // Constants are unique for each shader, they can be any subset of `gravylib_helpers::Constants`
-//     #[derive(Copy, Clone, Pod, Zeroable)]
-//     #[repr(C)]
-//     pub struct TestConstants { // Replace "Test" with the name of the shader in PascalCase
-//         pub width: u32,
-//         pub height: u32,
-//         pub time: f32,
-//     }
-//
-//     impl From<Constants> for TestConstants { // Here again, replace "Test" with the name of the shader in PascalCase
-//         fn from(constants: Constants) -> Self {
-//             Self {
-//                 width: constants.width,
-//                 height: constants.height,
-//                 time: constants.time,
-//             }
-//         }
-//     }
-//
        // This is the entry point of the shader. It must be named the same as the shader file, in snake_case
 //     #[spirv(fragment)]
 //     pub fn test( // Replace "test" with the name of the shader in snake_case
 //         #[spirv(frag_coord)] in_frag_coord: Vec4,
-//         #[spirv(push_constant)] constants: &TestConstants, // Replace "Test" with the name of the shader in PascalCase
+//         #[spirv(push_constant)] constants: &Constants,
 //         output: &mut Vec4,
 //     ) {
 //         let frag_coord = vec2(in_frag_coord.x, in_frag_coord.y);
@@ -176,7 +102,7 @@ use common::*;
        // This is the RawShader struct. It must be named the same as the shader file, in CONSTANT_CASE
 //     #[cfg(not(target_arch = "spirv"))]
 //     #[allow(dead_code)]
-//     pub const TEST: &RawShader<TestConstants> = &RawShader { // Replace "TEST" and "Test" with the name of the shader in CONSTANT_CASE and PascalCase, respectively.
+//     pub const TEST: &RawShader<Constants> = &RawShader { // Replace "TEST" with the name of the shader in CONSTANT_CASE
 //         shader_type: ShaderType::Pixel,
 //         crate_name: env!("CARGO_CRATE_NAME"),
 //         entry_point: "test", // Replace "test" with the name of the shader in snake_case

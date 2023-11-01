@@ -13,7 +13,7 @@ fn circle_sdf(p: Vec2, r: f32) -> f32 {
 
 // ** "Entry point" (effectively)
 
-pub fn circle( constants: &CircleConstants, frag_coord: Vec2) -> Vec4 {
+pub fn circle( constants: &Constants, frag_coord: Vec2) -> Vec4 {
 	let p: Vec2 = (2.0 * frag_coord
         - vec2(constants.width as f32,
             constants.height as f32))
