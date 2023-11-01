@@ -3,6 +3,7 @@
 #![deny(warnings)]
 use spirv_std::*;
 use glam::*;
+// use `gravylib::helpers::*` instead when creating your own shaders
 use gravylib_helpers::*;
 #[cfg(target_arch = "spirv")]
 use spirv_std::num_traits::Float;

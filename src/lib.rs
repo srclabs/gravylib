@@ -10,7 +10,8 @@ use winit::event_loop::EventLoopBuilder;
 mod graphics;
 
 use graphics::run;
-use gravylib_helpers::{ ShaderType, RawShader };
+pub use gravylib_helpers as helpers;
+use helpers::{ ShaderType, RawShader };
 
 pub struct Shader {
     #[allow(dead_code)]
@@ -56,16 +57,16 @@ impl From<&RawShader> for Shader {
 
 // Prepare for initial alpha release: (SUBJECT TO CHANGE)
 // done: eliminate custom constants system. use gravylib_helpers::Constants instead
+// done: implement helpers as a module expansion of gravylib main crate
 
-// todo: re-implement hot reloading
+// todo: explore traits, annotations, macros, etc. to reduce boilerplate
+// todo: explore using `lib.rs` in place of `common.rs`
 // todo: upgrade winit
 // todo: upgrade wgpu
-// todo: explore traits, annotations, macros, etc. to reduce boilerplate
-// todo: explore using lib in place of common
-// todo: more examples
-// todo: make a custom example to showcase rust features in shaders
-// todo: implement helpers as a module expansion of gravylib main crate
-// todo: consider adding an example shader crate with some helper SDF primitives.
+// todo: re-implement hot reloading
+// todo: more examples from shadertoy
+// todo: make a custom example or two to showcase rust features in shaders
+// todo: consider adding an example shader library crate with some helper SDF primitives.
 // todo: cleanup, refactoring, documentation
 // todo: Shiny new README with images
 // todo: Branding? Logo? Website? Promotion?
