@@ -21,7 +21,7 @@ fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration, sh
     });
 
     fn load_shader(device: &wgpu::Device, path: &str) -> wgpu::ShaderModule {
-        let spirv = &std::fs::read(path).expect(format!("Failed to read shader at {}!", path).as_str());
+        let spirv = &std::fs::read(path).unwrap_or_else(|_| panic!("Failed to read shader at {}!", path));
         let spirv = Cow::Owned(wgpu::util::make_spirv_raw(spirv).into_owned());
         device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: None,
@@ -180,7 +180,7 @@ impl State {
 
     fn input(&mut self, event: &WindowEvent<'_>) -> bool {
         match event {
-            _ => false,
+            _ => false, // TODO: Add input handling
         }
     }
 
@@ -327,7 +327,6 @@ pub(crate) async fn run(
                             }
                             _ => (),
                         }
-                        return;
                     }
                 },
             

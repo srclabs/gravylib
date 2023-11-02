@@ -4,7 +4,7 @@
 // ** Imports
 
 use crate::*;
-// use core::f32::consts::TAU;
+// use core::f32::consts::TAU; (example)
 
 // ** Constants
 
@@ -52,7 +52,7 @@ fn getwaves(mut position: Vec2, iterations: u32, time: f32) -> f32 {
     time_multiplier *= 1.07;
 
     // add some kind of random value to make next wave look random too
-    iter += 1232.399963;
+    iter += 1232.3999;
   }
   // calculate and return
   sum_of_values / sum_of_weights
@@ -93,11 +93,11 @@ fn create_rotation_matrix_axis_angle(axis: Vec3, angle: f32) -> Mat3{
   let s = angle.sin();
   let c = angle.cos();
   let oc = 1.0 - c;
-  return mat3(
+  mat3(
     vec3(oc * axis.x * axis.x + c,          oc * axis.x * axis.y - axis.z * s, oc * axis.z * axis.x + axis.y * s), 
     vec3(oc * axis.x * axis.y + axis.z * s, oc * axis.y * axis.y + c,          oc * axis.y * axis.z - axis.x * s), 
     vec3(oc * axis.z * axis.x - axis.y * s, oc * axis.y * axis.z + axis.x * s, oc * axis.z * axis.z + c         )
-  );
+  )
 }
 
 // Helper function that generates camera ray based on UV and mouse
@@ -110,9 +110,9 @@ fn get_ray(frag_coord: Vec2, resf: Vec2, mouse_norm: Vec2) -> Vec3 {
   if resf.x < 600.0 {
     return proj;
   }
-  return create_rotation_matrix_axis_angle(vec3(0.0, -1.0, 0.0), 3.0 * ((mouse_norm.x + 0.5) * 2.0 - 1.0)) 
+  create_rotation_matrix_axis_angle(vec3(0.0, -1.0, 0.0), 3.0 * ((mouse_norm.x + 0.5) * 2.0 - 1.0))
     * create_rotation_matrix_axis_angle(vec3(1.0, 0.0, 0.0), 0.5 + 1.5 * ((mouse_norm.y * 1.5) * 2.0 - 1.0))
-    * proj;
+    * proj
 }
 
 // Ray-Plane intersection checker
@@ -164,7 +164,7 @@ fn aces_tonemap(color: Vec3) -> Vec3 {
   );
   let v = m1 * color;  
   let a = v * (v + 0.0245786) - 0.000090537;
-  let b = v * (0.983729 * v + 0.4329510) + 0.238081;
+  let b = v * (0.983729 * v + 0.432951) + 0.238081;
   (m2 * (a / b)).clamp(Vec3::ZERO, Vec3::ONE)//.powf(1.0 / 2.2)
 }
 

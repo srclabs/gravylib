@@ -3,7 +3,7 @@
 // ** Imports
 
 use crate::*;
-use core::f32::consts::PI;
+// use core::f32::consts::PI; (included in `lib.rs`, imported above)
 
 // ** Helpers
 

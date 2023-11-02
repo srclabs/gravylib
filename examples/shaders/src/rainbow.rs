@@ -5,6 +5,10 @@
 use crate::*;
 use core::f32::consts::TAU;
 
+// ** Constants
+
+const ITERATIONS: u32 = 4;
+
 // ** Helpers
 
 pub fn palette(t: f32) -> Vec3 {
@@ -28,7 +32,7 @@ pub fn rainbow(
     let uv0 = uv;
     let mut final_color = Vec3::ZERO;
     
-    for i in 0..4 {
+    for i in 0..ITERATIONS {
         uv = (uv * 1.5).fract() - 0.5;
 
         let mut d = uv.length() * (-1.0 * uv0.length()).exp();

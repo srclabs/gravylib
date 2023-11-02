@@ -23,7 +23,7 @@ To learn more about the project, you can join the [**Discord**](https://discord.
 
 - [x] Eliminate custom constants system; use `gravylib_helpers::Constants` instead
 - [x] Implement `helpers` as a module expansion of `gravylib`
-- [ ] Use `lib.rs` as the common module instead of `common.rs`
+- [x] Use `lib.rs` as the common module instead of `common.rs`
 - [ ] Use annotations, **macros**, etc. to reduce boilerplate
 - [ ] Upgrade dependency versions (winit, wgpu)
 - [ ] Implement hot reloading

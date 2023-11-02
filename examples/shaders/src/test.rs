@@ -12,7 +12,7 @@
 // ** Imports
 
 use crate::*; // this should always be included
-use core::f32::consts::PI; // common example of a useful import
+use core::f32::consts::TAU; // common example of a useful import
 
 // ** Constants
 
