@@ -1,7 +1,7 @@
-// Example program using gravylib to build a simple shader program
+// Example program using gravylib to execute standalone shaders from a simple shader crate
 
 // ** FOR TINKERERS & SHADER DEVS:
-// See `test.rs` for an example of how to build a compatible shader program.
+// See `shaders/lib.rs` for an example of how to build a compatible shader crate.
 
 // Import gravylib
 use gravylib::*;
@@ -17,7 +17,7 @@ fn main() {
         // TIP: Try changing the shader program below!
         // Options: CIRCLE, RAINBOW, OCEAN
 
-        RAINBOW
+        OCEAN
 
     );
 
