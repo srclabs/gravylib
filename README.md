@@ -22,16 +22,20 @@ Pull requests are discouraged until the initial alpha release. However, if you w
 
 - [x] Eliminate custom constants system. use gravylib_helpers::Constants instead
 - [x] Implement helpers as a module expansion of gravylib
-- [ ] Use `lib.rs` in place of `common.rs` main crate
-- [ ] Explore traits, annotations, **macros**, etc. to reduce boilerplate
-- [ ] Upgrade winit
-- [ ] Upgrade wgpu
-- [ ] Re-implement hot reloading
+- [ ] Use `lib.rs` as the common module instead of `common.rs`
+- [ ] Use annotations, **macros**, etc. to reduce boilerplate
+- [ ] Upgrade dependency versions (winit, wgpu)
+- [ ] Implement hot reloading
 - [ ] More examples from shadertoy
 - [ ] Make a custom example or two to showcase rust features in shaders
-- [ ] Consider adding an example shader library crate with some helper SDF primitives.
+- [ ] Add an example library shader crate to showcase dependency powers
 - [ ] Add linter (clippy?)
-- [ ] Cleanup, refactoring, documentation
-- [ ] Shiny new README with images
-- [ ] Branding? Logo? Website? Promotion?
+- [ ] Final testing & refactoring
+- [ ] Cleanup codebase
+- [ ] Final quality check
+- [ ] Add documentation
+- [ ] Prepare for contributors
+- [ ] Shiny new README (with images!)
+- [ ] Branding? Logo? Website? mdBook?
 - [ ] Release on crates.io
+- [ ] Tell people about the project.
