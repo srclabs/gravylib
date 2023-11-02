@@ -1,7 +1,9 @@
 #![cfg_attr(target_arch = "spirv", no_std)]
 #![deny(warnings)]
-use spirv_std::*;
-use glam::*;
+pub use spirv_std::*;
+pub use glam::*;
+#[cfg(target_arch = "spirv")]
+pub use spirv_std::num_traits::Float;
 
 use bytemuck::{Pod, Zeroable};
 #[derive(Copy, Clone, Pod, Zeroable)]

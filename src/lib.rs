@@ -11,7 +11,8 @@ mod graphics;
 use graphics::run;
 pub use gravylib_macros as macros;
 pub use gravylib_helpers as helpers;
-use helpers::{ ShaderType, RawShader };
+pub use helpers::*;
+pub use macros::*;
 
 pub struct Shader {
     #[allow(dead_code)]

@@ -1,19 +1,3 @@
-// ** BOILERPLATE **
-// This chunk of code is almost entirely boilerplate,
-//   and will be abstracted in a later version.
-// If you are looking for the shader module boilerplate, check further down.
-    #![cfg_attr(target_arch = "spirv", no_std)]
-    #![deny(warnings)]
-    #![allow(dead_code)]
-    use spirv_std::*;
-    use glam::*;
-    // use `gravylib::helpers::*` instead when creating your own shaders
-    use gravylib_helpers::*;
-    #[cfg(target_arch = "spirv")]
-    use spirv_std::num_traits::Float;
-// ** BOILERPLATE **
-
-
 // ** This is a shader crate
 // It is a rust crate consisting of a single library,
 //   which contains a number of shader modules and/or library modules.
@@ -22,13 +6,31 @@
 // All functions and constants defined/imported here
 //   will be available to every shader module in the crate.
 // Below you can find some examples of useful functions and constants.
+// To learn how to build your own shader modules,
+//   see `examples/shaders/src/my_shader.rs`.
 
-// Imports
+// ** Header
+#![deny(warnings)] #![no_std]
+// Gravylib imports. In your own crate, import `gravylib::*` instead.
+use gravylib_helpers::*; use gravylib_macros::*;
+
+// ** Shaders
+// Here we declare the shader modules that will be published.
+
+shader!(rainbow);
+shader!(circle);
+shader!(ocean);
+// shader!(my_shader);
+
+// ** Common
+// Here we declare the common functions and constants
+// NOTE: Any public functions/constants defined here can be used by a dependent crate.
+
+// Imports - functions/constants from other crates
 use core::f32::consts::PI;
 
 // Constants
-
-const BLOOM: bool = true;
+const _BLOOM: bool = true;
 
 // Helpers
 pub fn saturate(x: f32) -> f32 {
@@ -101,113 +103,3 @@ pub fn to_linear(color: Vec4) -> Vec4 {
         color.w,
     )
 }
-
-
-// ** WARNING: BOILERPLATE AHEAD
-// The code below is almost entirely boilerplate,
-//   and will be abstracted in a later version.
-// For now, if you are building your own shader crate with Gravy,
-//   it is recommended to copy and paste the generic code below.
-// See `test.rs` for an example of how to build a compatible shader program.
-
-/*  ~~~~~ FORMAT ~~~~~  //
-
-    // Example boilerplate for the shader file `test.rs`:
-
-    // This is the shader module. It must be named the same as the shader file, in snake_case
-    mod test; // Replace "test" with the name of the shader file, in snake_case
-
-    // This is the entry point of the shader. It must be named the same as the shader file, in snake_case
-    #[spirv(fragment)]
-    pub fn test( // Replace "test" with the name of the shader file, in snake_case
-        #[spirv(frag_coord)] in_frag_coord: Vec4,
-        #[spirv(push_constant)] constants: &Constants,
-        output: &mut Vec4,
-    ) {
-        let frag_coord = vec2(in_frag_coord.x, in_frag_coord.y);
-        // Call the shader function from the shader file.
-        // The name of the function must be the same as the shader file, in snake_case
-        // The shader function must take the constants and the frag_coord (a Vec2) as arguments, and return a Vec4 RGBA color
-        *output = test::test(constants, frag_coord); // Replace "test" with the name of the shader file, in snake_case **(both times)**
-    }
-
-    // This is the RawShader struct. It must be named the same as the shader file, in CONSTANT_CASE
-    #[cfg(not(target_arch = "spirv"))]
-    #[allow(dead_code)]
-    pub const TEST: &RawShader = &RawShader { // Replace "TEST" with the name of the shader file, in CONSTANT_CASE
-        shader_type: ShaderType::Pixel,
-        crate_name: env!("CARGO_CRATE_NAME"),
-        entry_point: "test", // Replace "test" with the name of the shader file, in snake_case
-    };
-
-    // Once you have copied and updated the code above,
-    //   you can import your `&RawShader` into `example.rs` and test it out!
-
-//  ~~~~~ FORMAT ~~~~~  */
-
-// ** RAINBOW
-    mod rainbow;
-
-    #[spirv(fragment)]
-    pub fn rainbow(
-        #[spirv(frag_coord)] in_frag_coord: Vec4,
-        #[spirv(push_constant)] constants: &Constants,
-        output: &mut Vec4,
-    ) {
-        let frag_coord = vec2(in_frag_coord.x, in_frag_coord.y);
-        *output = rainbow::rainbow(constants, frag_coord);
-    }
-
-    #[cfg(not(target_arch = "spirv"))]
-    #[allow(dead_code)]
-    pub const RAINBOW: &RawShader = &RawShader {
-        shader_type: ShaderType::Pixel,
-        crate_name: env!("CARGO_CRATE_NAME"),
-        entry_point: "rainbow",
-    };
-// ** RAINBOW
-
-// ** CIRCLE
-    mod circle;
-
-    #[spirv(fragment)]
-    pub fn circle(
-        #[spirv(frag_coord)] in_frag_coord: Vec4,
-        #[spirv(push_constant)] constants: &Constants,
-        output: &mut Vec4,
-    ) {
-        let frag_coord = vec2(in_frag_coord.x, in_frag_coord.y);
-        *output = circle::circle(constants, frag_coord);
-    }
-
-    #[cfg(not(target_arch = "spirv"))]
-    #[allow(dead_code)]
-    pub const CIRCLE: &RawShader = &RawShader {
-        shader_type: ShaderType::Pixel,
-        crate_name: env!("CARGO_CRATE_NAME"),
-        entry_point: "circle",
-    };
-// ** CIRCLE
-
-// ** OCEAN
-    mod ocean;
-
-    #[spirv(fragment)]
-    pub fn ocean(
-        #[spirv(frag_coord)] in_frag_coord: Vec4,
-        #[spirv(push_constant)] constants: &Constants,
-        output: &mut Vec4,
-    ) {
-        let frag_coord = vec2(in_frag_coord.x, in_frag_coord.y);
-        *output = ocean::ocean(constants, frag_coord);
-    }
-
-    #[cfg(not(target_arch = "spirv"))]
-    #[allow(dead_code)]
-    pub const OCEAN: &RawShader = &RawShader {
-        shader_type: ShaderType::Pixel,
-        crate_name: env!("CARGO_CRATE_NAME"),
-        entry_point: "ocean",
-    };
-
-// ** OCEAN

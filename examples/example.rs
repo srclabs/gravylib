@@ -17,7 +17,7 @@ fn main() {
         // TIP: Try changing the shader program below!
         // Options: CIRCLE, RAINBOW, OCEAN
 
-        OCEAN
+        RAINBOW
 
     );
 

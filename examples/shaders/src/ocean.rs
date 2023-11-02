@@ -2,12 +2,10 @@
 // NOTE: Mouse input has been removed from the original
 
 // ** Imports
-
 use crate::*;
 // use core::f32::consts::TAU; (example)
 
 // ** Constants
-
 const DRAG_MULT: f32 = 0.28; // changes how much waves pull on the water
 const WATER_DEPTH: f32 = 1.0; // how deep is the water
 const CAMERA_HEIGHT: f32 = 1.5; // how high the camera should be
@@ -15,7 +13,6 @@ const ITERATIONS_RAYMARCH: u32 = 12; // waves iterations of raymarching
 const ITERATIONS_NORMAL: u32 = 40; // waves iterations when calculating normals
 
 // ** Helpers
-
 // Calculates wave value and its derivative, 
 // for the wave direction, position in space, wave frequency and time
 fn wavedx(position: Vec2, direction: Vec2, frequency: f32, timeshift: f32) -> Vec2 {
@@ -169,8 +166,6 @@ fn aces_tonemap(color: Vec3) -> Vec3 {
 }
 
 // ** "Entry point" (effectively)
-
-// Main
 pub fn ocean(constants: &Constants, frag_coord: Vec2) -> Vec4 {
   // get the ray
   let resf = vec2(constants.width as f32, constants.height as f32);

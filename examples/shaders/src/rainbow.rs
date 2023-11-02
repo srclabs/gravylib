@@ -1,16 +1,13 @@
 // Adapted from <https://www.shadertoy.com/view/mtyGWy>
 
 // ** Imports
-
 use crate::*;
 use core::f32::consts::TAU;
 
 // ** Constants
-
 const ITERATIONS: u32 = 4;
 
 // ** Helpers
-
 pub fn palette(t: f32) -> Vec3 {
     let a = vec3(0.5, 0.5, 0.5);
     let b = vec3(0.5, 0.5, 0.5);
@@ -21,7 +18,6 @@ pub fn palette(t: f32) -> Vec3 {
 }
 
 // ** "Entry point" (effectively)
-
 pub fn rainbow( 
     constants: &Constants,
     frag_coord: Vec2,

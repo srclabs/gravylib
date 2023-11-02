@@ -6,8 +6,8 @@
 //   but some parts (like the entry point signature) are required.
 // The boilerplate is moved to the bottom of `lib.rs` for readability;
 //   this is temporary, and will be abstracted in a later version.
-// When you are ready to test your new shader, head over to `lib.rs`
-//   and copy/paste the boilerplate code according to the instructions there.
+// When you are ready to test your new shader,
+//   head over to `lib.rs` and declare it at the top
 
 // ** Imports
 
@@ -32,7 +32,7 @@ pub fn tonemap(col: Vec3) -> Vec3 {
 
 // ** "Entry point" (effectively)
 
-pub fn test(
+pub fn my_shader(
     constants: &Constants,
     frag_coord: Vec2,
 ) -> Vec4 {

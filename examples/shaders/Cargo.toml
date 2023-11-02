@@ -12,5 +12,6 @@ crate-type = ["lib", "dylib"]
 
 [dependencies]
 spirv-std = { workspace = true }
-# use `gravylib` instead when creating your own shader crate
+# use `gravylib` instead of these when creating your own shader crate
 gravylib_helpers = { path = "../../gravylib_helpers" }
+gravylib_macros = { path = "../../gravylib_macros" }

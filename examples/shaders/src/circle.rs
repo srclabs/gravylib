@@ -1,18 +1,15 @@
 // Ported to Rust from <https://www.shadertoy.com/view/3ltSW2>
 
 // ** Imports
-
 use crate::*;
 // use core::f32::consts::PI; (included in `lib.rs`, imported above)
 
 // ** Helpers
-
 fn circle_sdf(p: Vec2, r: f32) -> f32 {
     p.length()-r
 }
 
 // ** "Entry point" (effectively)
-
 pub fn circle( constants: &Constants, frag_coord: Vec2) -> Vec4 {
 	let p: Vec2 = (2.0 * frag_coord
         - vec2(constants.width as f32,
