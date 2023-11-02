@@ -30,7 +30,8 @@ Pull requests are discouraged until the initial alpha release. However, if you w
 - [ ] Make a custom example or two to showcase rust features in shaders
 - [ ] Add an example library shader crate to showcase dependency powers
 - [ ] Add linter (clippy?)
-- [ ] Final testing & refactoring
+- [ ] Add automated tests
+- [ ] Testing & refactoring
 - [ ] Cleanup codebase
 - [ ] Final quality check
 - [ ] Add documentation
