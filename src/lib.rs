@@ -3,7 +3,6 @@
     nonstandard_style,
     rust_2018_idioms
 )]
-// TODO: Add lints (clippy?)
 
 use winit::event_loop::EventLoopBuilder;
 
@@ -53,21 +52,3 @@ impl From<&RawShader> for Shader {
 }
 
 // TODO: Use a `RenderGraphBuilder` for the external interface
-
-
-// Prepare for initial alpha release: (SUBJECT TO CHANGE)
-// done: eliminate custom constants system. use gravylib_helpers::Constants instead
-// done: implement helpers as a module expansion of gravylib main crate
-
-// todo: explore traits, annotations, macros, etc. to reduce boilerplate
-// todo: explore using `lib.rs` in place of `common.rs`
-// todo: upgrade winit
-// todo: upgrade wgpu
-// todo: re-implement hot reloading
-// todo: more examples from shadertoy
-// todo: make a custom example or two to showcase rust features in shaders
-// todo: consider adding an example shader library crate with some helper SDF primitives.
-// todo: cleanup, refactoring, documentation
-// todo: Shiny new README with images
-// todo: Branding? Logo? Website? Promotion?
-// todo: Release on crates.io
