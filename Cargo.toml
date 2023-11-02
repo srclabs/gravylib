@@ -5,7 +5,14 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 authors = ["Dr. Rubisco <doc@thedocruby.dev>"]
 description = "(WIP) Making GPU-first development a reality, with the power of GPU Rust."
-keywords = ["rust-gpu", "wgpu", "compute-shader", "vulkan", "toolkit", "framework"]
+keywords = [
+  "rust-gpu",
+  "wgpu",
+  "compute-shader",
+  "vulkan",
+  "toolkit",
+  "framework",
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -13,13 +20,19 @@ keywords = ["rust-gpu", "wgpu", "compute-shader", "vulkan", "toolkit", "framewor
 crate-type = ["lib", "cdylib"]
 
 [dependencies]
-futures = { version = "0.3", default-features = false, features = ["std", "executor"] }
+futures = { version = "0.3", default-features = false, features = [
+  "std",
+  "executor",
+] }
 wgpu = { version = "0.17", features = ["spirv", "vulkan-portability"] }
 winit = "0.28"
 cfg-if = "1.0.0"
 gravylib_helpers = { path = "./gravylib_helpers" }
 structopt = "0.3"
-strum = { version = "0.25", default_features = false, features = ["std", "derive"] }
+strum = { version = "0.25", default_features = false, features = [
+  "std",
+  "derive",
+] }
 bytemuck = "1.6.3"
 env_logger = "0.10.0"
 spirv-builder = { version = "=0.9.0", features = ["watch"] }
@@ -32,10 +45,7 @@ shaders = { path = "./examples/shaders" }
 
 [workspace]
 resolver = "2"
-members = [
-    "examples/shaders",
-    "gravylib_helpers"
-]
+members = ["examples/shaders", "gravylib_helpers"]
 
 [[example]]
 name = "example"
@@ -57,4 +67,4 @@ authors = ["Dr. Rubisco <doc@thedocruby.dev>"]
 spirv-std = { version = "=0.9.0" }
 spirv-std-types = { version = "=0.9.0" }
 spirv-std-macros = { version = "=0.9.0" }
-spirv-builder = { version = "=0.9.0", default-features = false  }
+spirv-builder = { version = "=0.9.0", default-features = false }

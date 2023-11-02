@@ -1,160 +1,134 @@
 {
-    "rust-analyzer.linkedProjects": [
-        "./examples/shaders/Cargo.toml",
-        "./gravylib_helpers/Cargo.toml"
-    ],
-    "evenbettercomments.tags": [
-
-        {
-            "tag": "!!",
-            "aliases": [
-                "Issue",
-                "Problem",
-                "Bug",
-                "Panic",
-                "Error",
-                "Danger",
-                "Broken"
-            ],
-            "color": "#FF2D00",
-            "overline": false,
-            "strikethrough": false,
-            "underline": false,
-            "backgroundColor": "transparent",
-            "bold": true,
-            "italic": false
-        },
-        {
-            "tag": "HACK",
-            "aliases": [
-                "Ugly",
-                "Temp",
-                "Dirty",
-                "Quick",
-                "Hotfix",
-                "Temporary"
-            ],
-            "color": "#FF2D00",
-            "overline": false,
-            "strikethrough": false,
-            "underline": false,
-            "backgroundColor": "transparent",
-            "bold": false,
-            "italic": false
-        },
-        {
-            "tag": "??",
-            "aliases": [
-                "Idea",
-                "Find",
-                "Research"
-            ],
-            "color": "#3498DB",
-            "overline": false,
-            "strikethrough": false,
-            "underline": false,
-            "backgroundColor": "transparent",
-            "bold": false,
-            "italic": false
-        },
-        {
-            "tag": "NOTE",
-            "aliases": [
-                "Notice",
-                "Look",
-                "Info",
-                "Information",
-                "Tip",
-            ],
-            "color": "#3498DB",
-            "overline": false,
-            "strikethrough": false,
-            "underline": false,
-            "backgroundColor": "transparent",
-            "bold": false,
-            "italic": true
-        },
-        {
-            "tag": "//",
-            "aliases": [
-                "-----"
-            ],
-            "color": "#474747",
-            "overline": false,
-            "strikethrough": true,
-            "underline": false,
-            "backgroundColor": "transparent",
-            "bold": false,
-            "italic": false
-        },
-        {
-            "tag": "TODO",
-            "aliases": [
-                "Fixme",
-                "Address",
-                "Fix"
-            ],
-            "color": "#FF8C00",
-            "overline": false,
-            "strikethrough": false,
-            "underline": false,
-            "backgroundColor": "transparent",
-            "bold": false,
-            "italic": false
-        },
-        {
-            "tag": "WARN",
-            "aliases": [
-                "Warning",
-            ],
-            "color": "#FF8C00",
-            "overline": false,
-            "strikethrough": false,
-            "underline": false,
-            "backgroundColor": "transparent",
-            "bold": true,
-            "italic": false
-        },
-        {
-            "tag": "**",
-            "aliases": [
-                "Important",
-                "Label",
-                "Key",
-                "Highlight",
-                "Begin",
-                "End",
-                "Start",
-                "Stop",
-                "~~~~~"
-            ],
-            "color": "#98C379",
-            "overline": false,
-            "strikethrough": false,
-            "underline": false,
-            "backgroundColor": "transparent",
-            "bold": false,
-            "italic": false
-        },
-        {
-            "tag": "WIP",
-            "aliases": [
-                "Work in Progress",
-                "(WIP)",
-                "Draft",
-                "Not Ready",
-                "Not Finished",
-                "Incomplete",
-                "Unfinished",
-                "Not Final"
-            ],
-            "color": "#98C379",
-            "overline": false,
-            "strikethrough": false,
-            "underline": false,
-            "backgroundColor": "transparent",
-            "bold": false,
-            "italic": true
-        }
-    ],
+  "rust-analyzer.linkedProjects": [
+    "./examples/shaders/Cargo.toml",
+    "./gravylib_helpers/Cargo.toml"
+  ],
+  "evenbettercomments.tags": [
+    {
+      "tag": "!!",
+      "aliases": [
+        "Issue",
+        "Problem",
+        "Bug",
+        "Panic",
+        "Error",
+        "Danger",
+        "Broken"
+      ],
+      "color": "#FF2D00",
+      "overline": false,
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": true,
+      "italic": false
+    },
+    {
+      "tag": "HACK",
+      "aliases": ["Ugly", "Temp", "Dirty", "Quick", "Hotfix", "Temporary"],
+      "color": "#FF2D00",
+      "overline": false,
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "??",
+      "aliases": ["Idea", "Find", "Research"],
+      "color": "#3498DB",
+      "overline": false,
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "NOTE",
+      "aliases": ["Notice", "Look", "Info", "Information", "Tip"],
+      "color": "#3498DB",
+      "overline": false,
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": true
+    },
+    {
+      "tag": "//",
+      "aliases": ["-----"],
+      "color": "#474747",
+      "overline": false,
+      "strikethrough": true,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "TODO",
+      "aliases": ["Fixme", "Address", "Fix"],
+      "color": "#FF8C00",
+      "overline": false,
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "WARN",
+      "aliases": ["Warning"],
+      "color": "#FF8C00",
+      "overline": false,
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": true,
+      "italic": false
+    },
+    {
+      "tag": "**",
+      "aliases": [
+        "Important",
+        "Label",
+        "Key",
+        "Highlight",
+        "Begin",
+        "End",
+        "Start",
+        "Stop",
+        "~~~~~"
+      ],
+      "color": "#98C379",
+      "overline": false,
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "WIP",
+      "aliases": [
+        "Work in Progress",
+        "(WIP)",
+        "Draft",
+        "Not Ready",
+        "Not Finished",
+        "Incomplete",
+        "Unfinished",
+        "Not Final"
+      ],
+      "color": "#98C379",
+      "overline": false,
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": true
+    }
+  ]
 }
