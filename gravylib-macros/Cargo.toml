@@ -1,5 +1,5 @@
 [package]
-name = "gravylib_macros"
+name = "gravylib-macros"
 version = "0.1.0-alpha"
 publish = false
 authors.workspace = true
