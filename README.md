@@ -25,7 +25,8 @@ To learn more about the project, you can join the [**Discord**](https://discord.
 - [x] Implement `helpers` as a module expansion of `gravylib`
 - [x] Use `lib.rs` as the common module instead of `common.rs`
 - [x] Use macros to reduce boilerplate
-- [ ] Upgrade dependency versions (winit, wgpu)
+- [x] Upgrade wgpu version 
+- [ ] Upgrade winit version
 - [ ] Implement hot reloading
 - [ ] More examples from shadertoy
 - [ ] Make a custom example or two to showcase rust features in shaders

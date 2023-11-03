@@ -96,6 +96,8 @@ impl State {
             backends: wgpu::util::backend_bits_from_env()
                 .unwrap_or(wgpu::Backends::VULKAN | wgpu::Backends::METAL | wgpu::Backends::DX12),
             dx12_shader_compiler: wgpu::util::dx12_shader_compiler_from_env().unwrap_or_default(),
+            gles_minor_version: wgpu::Gles3MinorVersion::Automatic,
+            flags: wgpu::InstanceFlags::VALIDATION,
         });
         
         let surface = unsafe { instance.create_surface(&window) }
@@ -205,10 +207,11 @@ impl State {
                             b: 1.0,
                             a: 1.0,
                         }),
-                        store: true,
+                        store: wgpu::StoreOp::Store,
                     },
                 })],
                 depth_stencil_attachment: None,
+                ..Default::default()
             });
 
             let push_constants = Constants {

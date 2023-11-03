@@ -24,7 +24,7 @@ futures = { version = "0.3", default-features = false, features = [
   "std",
   "executor",
 ] }
-wgpu = { version = "0.17", features = ["spirv", "vulkan-portability"] }
+wgpu = { version = "0.18", features = ["spirv", "vulkan-portability"] }
 winit = "0.28"
 cfg-if = "1.0.0"
 gravylib_helpers = { path = "./gravylib_helpers" }
