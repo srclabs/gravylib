@@ -4,7 +4,7 @@ version = "0.1.0-alpha"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 authors = ["Dr. Rubisco <doc@thedocruby.dev>"]
-description = "(WIP) Making GPU-first development a reality, with the power of GPU Rust."
+description = "Making GPU-first development a reality, with the power of GPU Rust."
 keywords = [
   "rust-gpu",
   "wgpu",
@@ -49,7 +49,7 @@ resolver = "2"
 members = ["examples/shaders", "gravylib_helpers", "gravylib_macros"]
 
 [[example]]
-name = "example"
+name = "standalone"
 
 # See rustc_codegen_spirv/Cargo.toml for details on these features
 [features]
