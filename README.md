@@ -26,7 +26,7 @@ To learn more about the project, you can join the [**Discord**](https://discord.
 - [x] Use `lib.rs` as the common module instead of `common.rs`
 - [x] Use macros to reduce boilerplate
 - [x] Upgrade wgpu version 
-- [ ] Upgrade winit version
+- [x] Upgrade winit version
 - [ ] Implement hot reloading
 - [ ] More examples from shadertoy
 - [ ] Make a custom example or two to showcase rust features in shaders

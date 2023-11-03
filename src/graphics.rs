@@ -2,9 +2,9 @@ use std::borrow::Cow;
 
 use gravylib_helpers::Constants;
 use winit::{
-    event::{ElementState, Event, KeyboardInput, VirtualKeyCode, WindowEvent},
-    event_loop::{ControlFlow, EventLoop},
-    window::Window,
+    event::{ElementState, Event, WindowEvent, KeyEvent},
+    event_loop::EventLoop,
+    window::Window, keyboard::{Key, NamedKey},
 };
 
 use crate::Shader;
@@ -180,7 +180,7 @@ impl State {
         }
     }
 
-    fn input(&mut self, event: &WindowEvent<'_>) -> bool {
+    fn input(&mut self, event: &WindowEvent) -> bool {
         match event {
             _ => false, // TODO: Add input handling
         }
@@ -252,7 +252,7 @@ pub(crate) async fn run(
 
     let start = std::time::Instant::now();
 
-    event_loop.run(move |event, _, control_flow| {
+    event_loop.run(move |event, target| {
         // Have the closure take ownership of the resources.
         // `event_loop.run` never returns, therefore we must do this to ensure
         // the resources are properly cleaned up.
@@ -261,9 +261,6 @@ pub(crate) async fn run(
 
         // ** Handle events
         match event {
-            Event::MainEventsCleared =>
-                state.window().request_redraw(),
-
             // ** Handle window events
             Event::WindowEvent {
                 ref event,
@@ -274,20 +271,20 @@ pub(crate) async fn run(
                     // ** Close window
                     WindowEvent::CloseRequested
                     | WindowEvent::KeyboardInput {
-                        input:
-                            KeyboardInput {
+                        event:
+                            KeyEvent {
                                 state: ElementState::Pressed,
-                                virtual_keycode: Some(VirtualKeyCode::Escape),
+                                logical_key: Key::Named(NamedKey::Escape),
                                 ..
                             },
                         ..
-                    } => *control_flow = ControlFlow::Exit,
+                    } => target.exit(),
 
                     // ** Toggle fullscreen
                     WindowEvent::KeyboardInput {
-                        input:
-                            KeyboardInput {
-                                virtual_keycode: Some(VirtualKeyCode::F11),
+                        event:
+                            KeyEvent {
+                                logical_key: Key::Named(NamedKey::F11),
                                 state: ElementState::Pressed,
                                 ..
                             },
@@ -299,42 +296,43 @@ pub(crate) async fn run(
                             state.window().set_fullscreen(Some(winit::window::Fullscreen::Borderless(None)));
                         }
                     },
+                    
+                    // ** Redraw window
+                    WindowEvent::RedrawRequested => {
+                        state.window().request_redraw();
+
+                        match state.render(
+                            start.elapsed().as_secs_f32()
+                        ) {
+                            Ok(()) => (),
+                            Err(err) => {
+                                eprintln!("Error! Could not find surface texture to display to: {err:?}");
+                                match err {
+                                    wgpu::SurfaceError::Lost => {
+                                        state.surface.configure(&state.device, &state.config);
+                                    }
+                                    wgpu::SurfaceError::OutOfMemory => {
+                                        target.exit();
+                                    }
+                                    _ => (),
+                                }
+                            }
+                        }
+                    },
+                        
 
                     // ** Resize window
                     WindowEvent::Resized(physical_size) => {
                         state.resize(*physical_size);
-                    }
-                    WindowEvent::ScaleFactorChanged { new_inner_size, .. } => {
-                        state.resize(**new_inner_size);
-                    }
+                    },
 
                     // ** Ignore other window events
                     _ => {}
                 }
             },
-
-            // ** Redraw window
-            Event::RedrawRequested(_) => 
-                match state.render(
-                    start.elapsed().as_secs_f32()
-                ) {
-                    Ok(()) => (),
-                    Err(err) => {
-                        eprintln!("Error! Could not find surface texture to display to: {err:?}");
-                        match err {
-                            wgpu::SurfaceError::Lost => {
-                                state.surface.configure(&state.device, &state.config);
-                            }
-                            wgpu::SurfaceError::OutOfMemory => {
-                                *control_flow = ControlFlow::Exit;
-                            }
-                            _ => (),
-                        }
-                    }
-                },
             
             // ** Ignore other events
             _ => {}
         }
-    });
+    }).expect("Event loop crashed unexpectedly!");
 }

@@ -25,7 +25,7 @@ impl Shader{
     pub fn execute(self) {
         // create event loop
         let mut event_loop_builder = EventLoopBuilder::with_user_event();
-        let event_loop = event_loop_builder.build();
+        let event_loop = event_loop_builder.build().expect("Failed to create event loop!");
 
         // create window
         let window = winit::window::WindowBuilder::new()
