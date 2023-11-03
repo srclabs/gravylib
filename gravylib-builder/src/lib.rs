@@ -4,6 +4,7 @@ use std::error::Error;
 // use std::fs;
 use std::path::Path;
 
+// TODO: Find a way to make this part of the public API (look into Path/PathBuf spec, and how to use it with `gravylib-macros``)
 pub fn build_shader(path_to_crate: &str, /*codegen_names: bool*/) -> Result<(), Box<dyn Error>> {
     let builder_dir = &Path::new(env!("CARGO_MANIFEST_DIR"));
     let path_to_crate = builder_dir.join(path_to_crate);
