@@ -794,6 +794,7 @@ name = "gravylib_helpers"
 version = "0.1.0-alpha"
 dependencies = [
  "bytemuck",
+ "gravylib_macros",
  "spirv-std",
 ]
 

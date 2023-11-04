@@ -11,8 +11,7 @@
 
 // ** Header
 #![deny(warnings)] #![no_std]
-// Gravylib imports. In your own crate, import `gravylib::*` instead.
-use gravylib_helpers::*; use gravylib_macros::*;
+use gravylib_helpers::*;
 
 // ** Shaders
 // Here we declare the shader modules that will be published.

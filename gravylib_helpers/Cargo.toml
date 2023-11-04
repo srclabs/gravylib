@@ -13,3 +13,4 @@ crate-type = ["lib", "dylib"]
 [dependencies]
 spirv-std = { workspace = true }
 bytemuck = { version = "1.6.3", features = ["derive"] }
+gravylib_macros = { path = "../gravylib_macros" }
