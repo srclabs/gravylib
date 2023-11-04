@@ -9,10 +9,8 @@ use winit::event_loop::EventLoopBuilder;
 mod graphics;
 
 use graphics::run;
-pub use gravylib_macros as macros;
 pub use gravylib_helpers as helpers;
-pub use helpers::*;
-pub use macros::*;
+use helpers::*;
 
 pub struct Shader {
     #[allow(dead_code)]

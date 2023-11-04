@@ -37,6 +37,7 @@ To learn more about the project, you can join the [**Discord**](https://discord.
 - [x] Use macros to reduce boilerplate
 - [x] Upgrade wgpu version 
 - [x] Upgrade winit version
+- [ ] Isolate examples
 - [ ] Implement hot reloading
 - [ ] More examples from shadertoy
 - [ ] Make a custom example or two to showcase rust features in shaders
