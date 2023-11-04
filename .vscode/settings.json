@@ -1,9 +1,8 @@
 {
   "rust-analyzer.linkedProjects": [
     "./examples/shaders/Cargo.toml",
-    "./gravylib-helpers/Cargo.toml",
-    "./gravylib-macros/Cargo.toml",
-    "./gravylib-builder/Cargo.toml"
+    "./gravylib_helpers/Cargo.toml",
+    "./gravylib_macros/Cargo.toml",
   ],
   "evenbettercomments.tags": [
     {

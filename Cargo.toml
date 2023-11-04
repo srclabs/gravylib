@@ -29,8 +29,8 @@ winit = { version = "0.29", features = [
   "rwh_05" # This is to maintain support with the latest version of wgpu. Should be removed once wgpu implements rwh_06.
   ] }
 cfg-if = "1.0.0"
-gravylib-helpers = { path = "./gravylib-helpers" }
-gravylib-macros = { path = "./gravylib-macros" }
+gravylib_helpers = { path = "./gravylib_helpers" }
+gravylib_macros = { path = "./gravylib_macros" }
 structopt = "0.3"
 strum = { version = "0.25", default_features = false, features = [
   "std",
@@ -48,7 +48,7 @@ shaders = { path = "./examples/shaders" }
 
 [workspace]
 resolver = "2"
-members = ["examples/shaders", "gravylib-helpers", "gravylib-macros", "gravylib-builder"]
+members = ["examples/shaders", "gravylib_helpers", "gravylib_macros"]
 
 [[example]]
 name = "standalone"

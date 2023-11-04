@@ -831,8 +831,8 @@ dependencies = [
  "cfg-if",
  "env_logger",
  "futures",
- "gravylib-helpers",
- "gravylib-macros",
+ "gravylib_helpers",
+ "gravylib_macros",
  "shaders",
  "spirv-builder",
  "structopt",
@@ -842,14 +842,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "gravylib-builder"
-version = "0.1.0-alpha"
-dependencies = [
- "spirv-builder",
-]
-
-[[package]]
-name = "gravylib-helpers"
+name = "gravylib_helpers"
 version = "0.1.0-alpha"
 dependencies = [
  "bytemuck",
@@ -857,7 +850,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "gravylib-macros"
+name = "gravylib_macros"
 version = "0.1.0-alpha"
 dependencies = [
  "proc-macro2",
@@ -1860,8 +1853,8 @@ dependencies = [
 name = "shaders"
 version = "0.0.0"
 dependencies = [
- "gravylib-helpers",
- "gravylib-macros",
+ "gravylib_helpers",
+ "gravylib_macros",
  "spirv-std",
 ]
 

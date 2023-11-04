@@ -1,5 +1,5 @@
 [package]
-name = "gravylib-helpers"
+name = "gravylib_helpers"
 version = "0.1.0-alpha"
 publish = false
 authors.workspace = true
@@ -11,5 +11,5 @@ repository.workspace = true
 crate-type = ["lib", "dylib"]
 
 [dependencies]
-spirv-std.workspace = true
+spirv-std = { workspace = true }
 bytemuck = { version = "1.6.3", features = ["derive"] }
