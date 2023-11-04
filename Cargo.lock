@@ -783,7 +783,6 @@ dependencies = [
  "futures",
  "gravylib_helpers",
  "gravylib_macros",
- "shaders",
  "spirv-builder",
  "wgpu",
  "winit",
@@ -1719,15 +1718,6 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
-]
-
-[[package]]
-name = "shaders"
-version = "0.0.0"
-dependencies = [
- "gravylib_helpers",
- "gravylib_macros",
- "spirv-std",
 ]
 
 [[package]]

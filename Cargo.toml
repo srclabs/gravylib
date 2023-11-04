@@ -35,15 +35,9 @@ bytemuck = "1.6.3"
 [build-dependencies]
 spirv-builder = { version = "=0.9.0", features = ["watch"] }
 
-[dev-dependencies]
-shaders = { path = "./examples/shaders" }
-
 [workspace]
 resolver = "2"
-members = ["examples/shaders", "gravylib_helpers", "gravylib_macros"]
-
-[[example]]
-name = "standalone"
+members = ["gravylib_helpers", "gravylib_macros"]
 
 # See rustc_codegen_spirv/Cargo.toml for details on these features
 [features]

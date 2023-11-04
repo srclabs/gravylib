@@ -1,6 +1,5 @@
 {
   "rust-analyzer.linkedProjects": [
-    "./examples/shaders/Cargo.toml",
     "./gravylib_helpers/Cargo.toml",
     "./gravylib_macros/Cargo.toml",
   ],
