@@ -4,6 +4,8 @@
     rust_2018_idioms
 )]
 
+use std::path::{Path, PathBuf};
+
 use winit::event_loop::EventLoopBuilder;
 
 mod graphics;
@@ -14,7 +16,7 @@ use gravylib_helpers::*;
 pub struct Shader {
     #[allow(dead_code)]
     shader_type: ShaderType,
-    path: String,
+    bin_path: PathBuf,
     entry_point: String,
 }
 
@@ -44,7 +46,7 @@ impl From<&RawShader> for Shader {
     fn from(raw: &RawShader) -> Self {
         Self {
             shader_type: raw.shader_type,
-            path: std::env::var(raw.crate_name.to_owned() + ".spv").expect("Invalid shader configuration!"),
+            bin_path: Path::new(raw.crate_path).join(raw.crate_name.replace("-", "_") + ".spv"),
             entry_point: raw.entry_point.to_owned(),
         }
     }

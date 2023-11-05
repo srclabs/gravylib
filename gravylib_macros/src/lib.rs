@@ -38,6 +38,7 @@ pub fn shader(name: TokenStream) -> TokenStream {
         pub const #constant: &RawShader = &RawShader {
             shader_type: ShaderType::Pixel,
             crate_name: env!("CARGO_CRATE_NAME"),
+            crate_path: env!("CARGO_MANIFEST_DIR"),
             entry_point: stringify!(#function),
         };
     };

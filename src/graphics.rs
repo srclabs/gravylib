@@ -55,7 +55,7 @@ fn build_pipeline(device: &wgpu::Device, config: &wgpu::SurfaceConfiguration, sh
         },
         // TODO: Figure out how to render to an `ImageBuffer` instead of a `Surface`
         fragment: Some(wgpu::FragmentState {
-            module: &load_shader(device, &shader.path),
+            module: &load_shader(device, &shader.bin_path.to_string_lossy()),
             entry_point: &shader.entry_point,
             targets: &[Some(wgpu::ColorTargetState {
                 format: config.format,

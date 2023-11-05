@@ -33,6 +33,7 @@ pub enum ShaderType {
 pub struct RawShader {
     pub shader_type: ShaderType,
     pub crate_name: &'static str,
+    pub crate_path: &'static str,
     pub entry_point: &'static str,
 }
 
