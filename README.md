@@ -24,7 +24,7 @@
 
 ### NOTE:
 This project is still a **Work In Progress**, so it's not recommended to use it in it's current state.
-**_However_**, if you would like to try it out, head over to [`example.rs`](./examples/shaders/src/example.rs) to find a tutorial of sorts. Pull requests are discouraged until the initial alpha release.
+**_However_**, if you would like to try it out, head over to the [`official example repo`](https://github.com/thedocruby/gravylib_examples) for a tutorial of sorts. Pull requests are discouraged until the initial alpha release.
 
 To learn more about the project, you can join the [**Discord**](https://discord.gg/7cBw5KHe6q).
 
@@ -37,7 +37,7 @@ To learn more about the project, you can join the [**Discord**](https://discord.
 - [x] Use macros to reduce boilerplate
 - [x] Upgrade wgpu version 
 - [x] Upgrade winit version
-- [ ] Isolate examples
+- [x] Isolate examples (https://github.com/thedocruby/gravylib_examples)
 - [ ] Implement hot reloading
 - [ ] More examples from shadertoy
 - [ ] Make a custom example or two to showcase rust features in shaders
@@ -52,4 +52,3 @@ To learn more about the project, you can join the [**Discord**](https://discord.
 - [ ] Shiny new README (with images!)
 - [ ] Branding? Logo? Website? mdBook?
 - [ ] Release on crates.io
-- [ ] Tell people about the project.
