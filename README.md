@@ -8,7 +8,7 @@
 
 **Gravy** sits in a niche with the likes of [**Shadertoy**](https://www.shadertoy.com/) and Unity's [**ShaderGraph**](https://unity.com/features/shader-graph) but stands apart in some key ways:
 
-- **Gravy is a framework *and* a toolkit.** You can build other applications on top of `gravylib` in flexible ways. You can use it as a a framework, like a game engine, or you can use it as a toolkit, like `raylib`. The possibilities are endless.
+- **Gravy is an framework *and* a toolkit.** You can build applications with Gravy in flexible ways. Whether using the Gravy IDE as a development framework (like a game engine), or using `gravylib` directly as a toolkit (like e.g. `raylib`), the creative possibilities are endless.
 - **Gravy is a development environment.** Like Shadertoy, Gravy gives you the power to build amazing and beautiful shader programs, without having to worry about asset loading, windowing, i/o, graphics APIs, etc. You can focus on building your masterpiece, and leave the dirty work to us.
 - **Gravy is a node graph.** Like ShaderGraph, `gravylib` allows you to build your shader program quickly and intuitively with a simple node-oriented API. Eventually, the Gravy IDE will even have a built-in visual node editor!
 - **Gravy is Rusty.** Featuring a core built on Embark's [`rust-gpu`](https://github.com/EmbarkStudios/rust-gpu), `gravylib` lets you leverage the power of the beautiful [Rust Programming Language](https://www.rust-lang.org/), to make more complex and powerful shaders than ever possible before, and all without the need to write everything by hand.
