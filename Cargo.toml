@@ -38,6 +38,7 @@ spirv-builder = { version = "=0.9.0", features = ["watch"] }
 [workspace]
 resolver = "2"
 members = ["gravylib_helpers", "gravylib_macros"]
+exclude = ["gravylib_example/runner", "gravylib_example/shader"]
 
 # See rustc_codegen_spirv/Cargo.toml for details on these features
 [features]

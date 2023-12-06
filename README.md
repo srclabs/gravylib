@@ -27,10 +27,10 @@ But it doesn't end there. Gravy empowers the devs of today to create the **digit
 
 ## Where do I start?
 
-If you would like to try it out, head over to the [official example repo](https://github.com/thedocruby/gravylib_example) for a tutorial of sorts.
+If you would like to try it out, head over to the [official example](gravylib_example) for a tutorial of sorts.
 **_However_**, this project is still a **Work In Progress**: The structure and API are in a highly fluid state and are constantly being reworked. Keep this in mind before starting any big projects with `gravylib`.
 
-To learn more about the project, you can join the [**Discord**](https://discord.gg/7cBw5KHe6q).
+<!-- To learn more about the project, you can join the [**`_src` Discord**](https://discord.gg/7cBw5KHe6q). -->
 
 ## How can I help?
 
@@ -47,7 +47,10 @@ As stated above, the structure is constantly changing, so Pull Requests are disc
 - [x] Use macros to reduce boilerplate
 - [x] Upgrade wgpu version 
 - [x] Upgrade winit version
-- [x] Isolate examples (they live [here](https://github.com/thedocruby/gravylib_example) now)
+- [x] Isolate examples (they live [here](https://github.com/srclabs/gravylib_example) now)
+  - [x] Add back as a git submodule :P
+- [x] Start a company (lolol, welcome to `_src`! [Website](https://srclabs.dev) | [GitHub](https://github.com/srclabs))
+- [ ] Reprinciple backend
 - [ ] Implement hot reloading
 - [ ] Basic image buffer support
 - [ ] More examples from shadertoy

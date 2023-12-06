@@ -1,0 +1,3 @@
+[submodule "gravylib_example"]
+	path = gravylib_example
+	url = https://github.com/srclabs/gravylib_example
