@@ -1,6 +1,6 @@
 # Licensing Information
 
-Copyright 2023 Dr. Rubisco [[doc@thedocruby.dev](mailto:doc@thedocruby.dev)].
+Copyright 2023 Source Labs [[doc@thedocruby.dev](mailto:doc@thedocruby.dev)].
 
 Copyrights in this project are retained by contributors. No copyright assignment
 is required to contribute to this project.
