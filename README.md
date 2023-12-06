@@ -27,7 +27,7 @@ But it doesn't end there. Gravy empowers the devs of today to create the **digit
 
 ## Where do I start?
 
-If you would like to try it out, head over to the [official example](gravylib_example) for a tutorial of sorts.
+If you would like to try it out, you can clone the repo and run the example program at `gravylib/gravylib_example/runner`
 **_However_**, this project is still a **Work In Progress**: The structure and API are in a highly fluid state and are constantly being reworked. Keep this in mind before starting any big projects with `gravylib`.
 
 <!-- To learn more about the project, you can join the [**`_src` Discord**](https://discord.gg/7cBw5KHe6q). -->
